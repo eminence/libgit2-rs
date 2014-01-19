@@ -8,6 +8,7 @@ extern mod extra;
 
 pub mod git2 {
     use std::libc;
+    use std::num::{FromPrimitive, ToPrimitive};
 
     //static lock: Mutex = Mutex::new();
 
@@ -18,6 +19,72 @@ pub mod git2 {
 
     //use repo::GitRepo;
     //use refe::GitReference;
+
+    #[deriving(Eq,FromPrimitive)]
+    enum GitErrorCode {
+        GIT_OK = 0,
+        GIT_ERROR = -1,
+        GIT_ENOTFOUND = -3,
+        GIT_EEXISTS = -4,
+        GIT_EAMBIGUOUS = -5,
+        GIT_EBUFS = -6,
+        GIT_EUSER = -7,
+        GIT_EBAREREPO = -8,
+        GIT_EORPHANEDHEAD = -9,
+        GIT_EUNMERGED = -10,
+        GIT_ENONFASTFORWARD = -11,
+        GIT_EINVALIDSPEC = -12,
+        GIT_EMERGECONFLICT = -13,
+
+        GIT_PASSTHROUGH = -30,
+        GIT_ITEROVER = -31,
+    }
+
+    enum GitErrorType {
+        GITERR_NOMEMORY,
+        GITERR_OS,
+        GITERR_INVALID,
+        GITERR_REFERENCE,
+        GITERR_ZLIB,
+        GITERR_REPOSITORY,
+        GITERR_CONFIG,
+        GITERR_REGEX,
+        GITERR_ODB,
+        GITERR_INDEX,
+        GITERR_OBJECT,
+        GITERR_NET,
+        GITERR_TAG,
+        GITERR_TREE,
+        GITERR_INDEXER,
+        GITERR_SSL,
+        GITERR_SUBMODULE,
+        GITERR_THREAD,
+        GITERR_STASH,
+        GITERR_CHECKOUT,
+        GITERR_FETCHHEAD,
+        GITERR_MERGE,
+    }
+
+    struct _GitError {
+        message: *libc::c_char,
+        klass: GitErrorType
+    }
+    struct GitError {
+        message: ~str,
+        class: GitErrorType
+    }
+
+    pub fn get_last_error() -> Option<GitError> {
+        let e: *_GitError = unsafe {giterr_last()};
+        unsafe {
+            match e.to_option() {
+                None => None,
+                Some(er) => { 
+                    Some(GitError{message: ::std::str::raw::from_c_str(er.message), class: er.klass})
+                }
+            }
+        }
+    }
 
 
     type rawGitOIDPtr = *libc::c_void;
@@ -41,8 +108,11 @@ pub mod git2 {
     }
 
 
+
+
     extern {
-        #[link(name="achin")];
+        fn giterr_last() -> *_GitError;
+
         fn git_repository_free(repo: *GitRepo);
         fn git_repository_init(repo: **GitRepo, path: *libc::c_char, is_bare:u32) -> libc::c_int;
         fn git_repository_open(repo: **GitRepo, path: *libc::c_char) -> libc::c_int;

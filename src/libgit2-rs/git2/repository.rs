@@ -26,26 +26,35 @@ impl Repository {
     fn _get_ptr(&self) -> *GitRepo {
         self._ptr.borrow()._val
     }
-    pub fn init(local_path: &Path, is_bare: bool) -> Repository {
+    pub fn init(local_path: &Path, is_bare: bool) -> Result<Repository, git2::GitError> {
         let p: *GitRepo = ptr::null();
         println!("git repo pointer starts at {}", p);
-        unsafe { git2::git_repository_init(ptr::to_unsafe_ptr(&p), local_path.to_c_str().unwrap(), is_bare as u32); }
+        let ret = unsafe { git2::git_repository_init(ptr::to_unsafe_ptr(&p), local_path.to_c_str().unwrap(), is_bare as u32) };
+        if ret != 0 {
+            return Err(git2::get_last_error().unwrap());
+        }
         println!("git repo pointer ends at {}", p);
-        Repository::_new(p)
+        Ok(Repository::_new(p))
     }
-    pub fn open(local_path: &Path) -> Repository {
+    pub fn open(local_path: &Path) -> Result<Repository, git2::GitError> {
         let p: *GitRepo = ptr::null();
         println!("git repo pointer starts at {}", p);
-        unsafe { git2::git_repository_open(ptr::to_unsafe_ptr(&p), local_path.to_c_str().unwrap()); }
+        let ret = unsafe { git2::git_repository_open(ptr::to_unsafe_ptr(&p), local_path.to_c_str().unwrap()) };
+        if ret != 0 {
+            return Err(git2::get_last_error().unwrap());
+        }
         println!("git repo pointer ends at {}", p);
-        Repository::_new(p)
+        Ok(Repository::_new(p))
     }
-    pub fn open_bare(local_path: &Path) -> Repository {
+    pub fn open_bare(local_path: &Path) -> Result<Repository, git2::GitError> {
         let p: *GitRepo = ptr::null();
         println!("git repo pointer starts at {}", p);
-        unsafe { git2::git_repository_open_bare(ptr::to_unsafe_ptr(&p), local_path.to_c_str().unwrap()); }
+        let ret = unsafe { git2::git_repository_open_bare(ptr::to_unsafe_ptr(&p), local_path.to_c_str().unwrap()) };
+        if ret != 0 {
+            return Err(git2::get_last_error().unwrap());
+        }
         println!("git repo pointer ends at {}", p);
-        Repository::_new(p)
+        Ok(Repository::_new(p))
     }
     pub fn is_bare(&self) -> bool { unsafe {git2::git_repository_is_bare(self._get_ptr()) == 1 } }
     pub fn is_empty(&self) -> bool { unsafe {git2::git_repository_is_empty(self._get_ptr()) == 1 } }
@@ -57,14 +66,15 @@ impl Repository {
         }
     }
 
-    pub fn lookup_reference(self, name: &str) -> Reference {
+    pub fn lookup_reference(&self, name: &str) -> Result<Reference, git2::GitError> {
         unsafe {
             let p: *GitReference = ptr::null();
             let ret = git2::git_reference_lookup(ptr::to_unsafe_ptr(&p), self._get_ptr(), name.to_c_str().unwrap());
             if ret != 0 {
-                fail!("Failed git_reference_lookup");
+                return Err(git2::get_last_error().unwrap());
             }
-            Reference::_new(self.clone(), p)
+            println!("ref is OK");
+            Ok(Reference::_new(self.clone(), p))
         }
     }
 }
