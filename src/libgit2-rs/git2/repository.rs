@@ -5,6 +5,9 @@ use std::path::Path;
 
 use git2;
 use git2::reference::{Reference, GitReference};
+use git2::oid::{ToOID, OID};
+use git2::object::{GitObject, Object, GitObjectType};
+use git2::blob::{Blob, GitBlob};
 
 pub struct GitRepo;
 
@@ -31,7 +34,7 @@ impl Repository {
         println!("git repo pointer starts at {}", p);
         let ret = unsafe { git2::git_repository_init(ptr::to_unsafe_ptr(&p), local_path.to_c_str().unwrap(), is_bare as u32) };
         if ret != 0 {
-            return Err(git2::get_last_error().unwrap());
+            return Err(git2::get_last_error());
         }
         println!("git repo pointer ends at {}", p);
         Ok(Repository::_new(p))
@@ -41,7 +44,7 @@ impl Repository {
         println!("git repo pointer starts at {}", p);
         let ret = unsafe { git2::git_repository_open(ptr::to_unsafe_ptr(&p), local_path.to_c_str().unwrap()) };
         if ret != 0 {
-            return Err(git2::get_last_error().unwrap());
+            return Err(git2::get_last_error());
         }
         println!("git repo pointer ends at {}", p);
         Ok(Repository::_new(p))
@@ -51,7 +54,7 @@ impl Repository {
         println!("git repo pointer starts at {}", p);
         let ret = unsafe { git2::git_repository_open_bare(ptr::to_unsafe_ptr(&p), local_path.to_c_str().unwrap()) };
         if ret != 0 {
-            return Err(git2::get_last_error().unwrap());
+            return Err(git2::get_last_error());
         }
         println!("git repo pointer ends at {}", p);
         Ok(Repository::_new(p))
@@ -71,11 +74,44 @@ impl Repository {
             let p: *GitReference = ptr::null();
             let ret = git2::git_reference_lookup(ptr::to_unsafe_ptr(&p), self._get_ptr(), name.to_c_str().unwrap());
             if ret != 0 {
-                return Err(git2::get_last_error().unwrap());
+                return Err(git2::get_last_error());
             }
             println!("ref is OK");
             Ok(Reference::_new(self.clone(), p))
         }
+    }
+
+    pub fn lookup_object<T: ToOID>(&self, oid: T, t: GitObjectType) -> Result<Object, git2::GitError> {
+        let p: *GitObject = ptr::null();
+        let _oid = match oid.to_oid() {
+            Err(e) => {return Err(e); },
+            Ok(o) => o
+        };
+
+        println!("About to git_object_lookup");
+        let ret = unsafe{ git2::git_object_lookup(ptr::to_unsafe_ptr(&p), self._get_ptr(), _oid._get_ptr(), t) };
+        if ret != 0 {
+            return Err(git2::get_last_error());
+        }
+        println!("done git_object_lookup, p is {}", p);
+        return Ok(Object::_new(p));
+    }
+
+    pub fn lookup_blob<T: ToOID>(&self, oid: T) -> Result<Blob, git2::GitError> {
+        let p: *GitBlob = ptr::null();
+        let _oid = match oid.to_oid() {
+            Err(e) => {return Err(e); },
+            Ok(o) => o
+        };
+
+        let ret = unsafe { git2::git_blob_lookup(ptr::to_unsafe_ptr(&p), self._get_ptr(), _oid._get_ptr()) };
+        if ret != 0 {
+            return Err(git2::get_last_error());
+        }
+        println!("done git_object_lookup, p is {}", p);
+        return Ok(Blob::_new(p));
+
+
     }
 }
 

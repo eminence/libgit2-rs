@@ -8,14 +8,19 @@ extern mod extra;
 
 pub mod git2 {
     use std::libc;
-    use std::num::{FromPrimitive, ToPrimitive};
 
     //static lock: Mutex = Mutex::new();
 
     pub use self::repository::{Repository, GitRepo};
     pub use self::reference::{Reference, GitReference};
+    pub use self::oid::{OID, GitOid};
+    pub use self::object::{Object, GitObject, GitObjectType};
+    pub use self::blob::{Blob, GitBlob};
     pub mod repository;
     pub mod reference;
+    pub mod oid;
+    pub mod object;
+    pub mod blob;
 
     //use repo::GitRepo;
     //use refe::GitReference;
@@ -74,24 +79,19 @@ pub mod git2 {
         class: GitErrorType
     }
 
-    pub fn get_last_error() -> Option<GitError> {
+    pub fn get_last_error() -> GitError {
         let e: *_GitError = unsafe {giterr_last()};
         unsafe {
             match e.to_option() {
-                None => None,
+                None => fail!("Asked for error, but there was no error"),
                 Some(er) => { 
-                    Some(GitError{message: ::std::str::raw::from_c_str(er.message), class: er.klass})
+                    GitError{message: ::std::str::raw::from_c_str(er.message), class: er.klass}
                 }
             }
         }
     }
 
-
-    type rawGitOIDPtr = *libc::c_void;
-
-
     
-    struct OID;
 
     pub enum GitOType {
         
@@ -127,8 +127,21 @@ pub mod git2 {
         fn git_reference_is_branch(refp: *GitReference) -> libc::c_int;
         fn git_reference_is_remote(refp: *GitReference) -> libc::c_int;
         fn git_reference_type(refp: *GitReference) -> libc::c_int;
-        fn git_reference_target(refp: *GitReference) -> rawGitOIDPtr;
+        fn git_reference_target(refp: *GitReference) -> *GitOid;
+        fn git_reference_name_to_id(oid: *GitOid, repo: *GitRepo, name: *libc::c_char) -> libc::c_int;
+
+        fn git_object_free(obj: *GitObject);
+        fn git_object_lookup(obj: **GitObject, repo: *GitRepo, oid: *GitOid, t:GitObjectType) -> libc::c_int;
+        fn git_object_type(obj: *GitObject) -> GitObjectType;
+
+        fn git_oid_fromstrp(oid: *GitOid, s: *libc::c_char) -> libc::c_int;
+
+        fn git_blob_free(obj: *GitBlob);
+        fn git_blob_lookup(obj: **GitBlob, repo: *GitRepo, oid: *GitOid) -> libc::c_int;
+        fn git_blob_rawsize(obj: *GitBlob) -> i64;
+        fn git_blob_rawcontent(obj: *GitBlob) -> *u8;
     }
+    
     
 
     

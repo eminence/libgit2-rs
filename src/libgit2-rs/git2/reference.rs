@@ -3,6 +3,7 @@ use std::rc::Rc;
 
 use git2;
 use git2::repository::{Repository};
+use git2::oid::{OID,GitOid,ToOID};
 
 pub struct GitReference;
 priv struct GitRefPtr {
@@ -45,8 +46,20 @@ impl Reference {
             _ => fail!("Failed to get ref type")
         }
     }
+    pub fn target(&self) -> Option<OID> {
+        let ret : *GitOid= unsafe {git2::git_reference_target(self._get_ptr())};
+        if ret.is_null() { return None; }
+        Some(OID::_new(ret))
+    }
     
 }
+
+impl ToOID for Reference {
+    fn to_oid(&self) -> Result<OID, git2::GitError> {
+        Ok(self.target().unwrap())
+    }
+}
+
 impl Drop for GitRefPtr {
     fn drop(&mut self) {
         println!("dropping this reference!");
