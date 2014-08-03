@@ -24,64 +24,10 @@ pub mod git2 {
     pub mod commit;
     pub mod config;
 
-
 #[link(name="git2")]
-    extern {
-        fn giterr_last() -> *mut _GitError;
+    extern {}
 
-        fn git_repository_free(repo: *mut GitRepo);
-        fn git_repository_init(repo: *mut *mut GitRepo, path: *const c_char, is_bare:u32) -> c_int;
-        fn git_repository_open(repo: *mut *mut GitRepo, path: *const c_char) -> c_int;
-        fn git_repository_open_bare(repo: *mut *mut GitRepo, path: *const c_char) -> c_int;
-        fn git_repository_is_bare(repo: *mut GitRepo) -> c_int;
-        fn git_repository_is_empty(repo: *mut GitRepo) -> c_int;
-        fn git_repository_is_shallow(repo: *mut GitRepo) -> c_int;
-        fn git_repository_path(repo: *mut GitRepo) -> *const c_uchar;
-        fn git_repository_config(out: *mut *mut GitConfig, repo: *mut GitRepo) -> c_int;
 
-        fn git_reference_free(repf: *mut GitReference);
-        fn git_reference_lookup(refp: *mut *mut GitReference, repo: *mut GitRepo, path: *const c_char) -> c_int;
-        fn git_reference_is_branch(refp: *mut GitReference) -> c_int;
-        fn git_reference_is_remote(refp: *mut GitReference) -> c_int;
-        fn git_reference_type(refp: *mut GitReference) -> c_int;
-        fn git_reference_target(refp: *mut GitReference) -> *const GitOid;
-        fn git_reference_name_to_id(oid: *mut GitOid, repo: *mut GitRepo, name: *const c_char) -> c_int;
-
-        fn git_oid_fromstrp(oid: *mut GitOid, s: *const c_char) -> c_int;
-        fn git_oid_cmp(a: *const GitOid, b: *const GitOid) -> c_int;
-        fn git_oid_tostr(out: *mut c_char, size: u32, obj: *const GitOid) -> *mut c_char;
-
-        fn git_object_free(obj: *mut GitObject);
-        fn git_object_lookup(obj: *mut *mut GitObject, repo: *mut GitRepo, oid: *const GitOid, t:GitObjectType) -> c_int;
-        fn git_object_type(obj: *mut GitObject) -> GitObjectType;
-
-        fn git_blob_free(obj: *mut GitBlob);
-        fn git_blob_lookup(obj: *mut *mut GitBlob, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
-        fn git_blob_rawsize(obj: *const GitBlob) -> GitOff;
-        fn git_blob_rawcontent(obj: *mut GitBlob) -> *const u8;
-        fn git_blob_owner(obj: *const GitBlob) -> *mut GitRepo;
-        fn git_blob_id(obj: *const GitBlob) -> *const GitOid;
-        fn git_blob_is_binary(obj: *const GitBlob) -> c_int;
-
-        fn git_commit_free(obj: *mut GitCommit);
-        fn git_commit_lookup(obj: *mut *mut GitCommit, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
-        fn git_commit_message(obj: *mut GitCommit) -> *const c_char;
-        fn git_commit_message_encoding(obj: *mut GitCommit) -> *const c_char;
-        fn git_commit_parentcount(obj: *mut GitCommit) -> c_uint;
-        fn git_commit_time_offset(obj: *mut GitCommit) -> c_int;
-        fn git_commit_time(obj: *mut GitCommit) -> i64;
-        fn git_commit_author(obj: *mut GitCommit) -> *const GitSignature;
-        fn git_commit_committer(obj: *mut GitCommit) -> *const GitSignature;
-
-        fn git_config_free(obj: *mut GitConfig);
-        fn git_config_get_bool(out: *mut c_int, obj: *const GitConfig, name: *const c_char) -> c_int;
-        fn git_config_get_string(out: *mut *mut c_char, obj: *const GitConfig, name: *const c_char) -> c_int;
-        fn git_config_get_entry(out: *mut *mut GitConfigEntryRaw, obj: *const GitConfig, name: *const c_char) -> c_int;
-        fn git_config_iterator_new(out: *mut *mut GitConfigIteratorRaw, obj: *const GitConfig) -> c_int;
-        fn git_config_next(out: *mut *mut GitConfigEntryRaw, obj: *mut GitConfigIteratorRaw) -> c_int;
-        fn git_config_iterator_free(obj: *mut GitConfigIteratorRaw);
-
-    }
 
 }
 

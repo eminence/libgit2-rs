@@ -1,8 +1,19 @@
+extern crate libc;
 
 //use std::num::{FromPrimitive};
 use std::rc::Rc;
-use git2;
+use self::libc::{c_char, c_uchar, c_int, c_uint};
 
+use git2;
+use git2::repository::GitRepo;
+use git2::oid::GitOid;
+
+extern {
+
+    fn git_object_free(obj: *mut GitObject);
+    fn git_object_lookup(obj: *mut *mut GitObject, repo: *mut GitRepo, oid: *const GitOid, t:GitObjectType) -> c_int;
+    fn git_object_type(obj: *mut GitObject) -> GitObjectType;
+}
 
 pub struct GitObject;
 
@@ -36,13 +47,13 @@ impl Object {
     }
     pub fn _get_ptr(&self) -> *mut GitObject { self._ptr.deref()._val }
     pub fn get_type(&self) -> GitObjectType {
-        unsafe { git2::git_object_type(self._get_ptr()) }
+        unsafe { git_object_type(self._get_ptr()) }
     }
 }
 
 impl Drop for GitObjPtr {
     fn drop(&mut self) {
         println!("dropping this object!");
-        unsafe { git2::git_object_free(self._val)}
+        unsafe { git_object_free(self._val)}
     }
 }

@@ -4,6 +4,9 @@ use std::string::raw::from_buf;
 use std::fmt::{Show, Formatter, FormatError};
 
 use git2;
+extern {
+    fn giterr_last() -> *mut _GitError;
+}
 
 #[deriving(Show)]
 enum GitErrorType {
@@ -48,7 +51,7 @@ impl Show for GitError {
 }
 
 pub fn get_last_error() -> GitError {
-    let e: *mut _GitError = unsafe {git2::giterr_last()};
+    let e: *mut _GitError = unsafe {giterr_last()};
     unsafe {
         match e.to_option() {
             None => fail!("Asked for error, but there was no error"),
