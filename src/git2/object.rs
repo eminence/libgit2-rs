@@ -2,14 +2,17 @@ extern crate libc;
 
 //use std::num::{FromPrimitive};
 use std::rc::Rc;
+use std::ptr;
+use self::libc::{c_int};
 
-//use git2::repository::GitRepo;
-//use git2::oid::GitOid;
+use git2::error::{GitError, get_last_error};
+use git2::repository::{Repository, GitRepo};
+use git2::oid::{ToOID, GitOid};
 
 extern {
 
     fn git_object_free(obj: *mut GitObject);
-    //fn git_object_lookup(obj: *mut *mut GitObject, repo: *mut GitRepo, oid: *const GitOid, t:GitObjectType) -> c_int;
+    fn git_object_lookup(obj: *mut *mut GitObject, repo: *mut GitRepo, oid: *const GitOid, t:GitObjectType) -> c_int;
     fn git_object_type(obj: *mut GitObject) -> GitObjectType;
 }
 
@@ -40,8 +43,23 @@ pub struct Object {
 }
 
 impl Object {
-    pub fn _new(p: *mut GitObject) -> Object {
+    fn _new(p: *mut GitObject) -> Object {
         Object{_ptr: Rc::new(GitObjPtr{_val:p})}
+    }
+    pub fn lookup<T: ToOID>(repo: &Repository, oid:T, t: GitObjectType) -> Result<Object, GitError> {
+        let mut p: *mut GitObject = ptr::mut_null();
+        let _oid = match oid.to_oid() {
+            Err(e) => {return Err(e); },
+            Ok(o) => o
+        };
+
+        println!("About to git_object_lookup");
+        let ret = unsafe{ git_object_lookup(&mut p, repo._get_ptr(), _oid._get_ptr(), t) };
+        if ret != 0 {
+            return Err(get_last_error());
+        }
+        println!("done git_object_lookup, p is {}", p);
+        return Ok(Object::_new(p));
     }
     pub fn _get_ptr(&self) -> *mut GitObject { self._ptr.deref()._val }
     pub fn get_type(&self) -> GitObjectType {

@@ -2,13 +2,15 @@ extern crate libc;
 use self::libc::{c_char, c_int, c_uint};
 
 use std::rc::Rc;
-//use git2::repository::GitRepo;
-//use git2::oid::GitOid;
+use std::ptr;
+use git2::repository::{GitRepo, Repository};
+use git2::oid::{GitOid, ToOID};
+use git2::error::{GitError, get_last_error};
 
 extern {
 
     fn git_commit_free(obj: *mut GitCommit);
-    //fn git_commit_lookup(obj: *mut *mut GitCommit, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
+    fn git_commit_lookup(obj: *mut *mut GitCommit, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
     fn git_commit_message(obj: *mut GitCommit) -> *const c_char;
     fn git_commit_message_encoding(obj: *mut GitCommit) -> *const c_char;
     fn git_commit_parentcount(obj: *mut GitCommit) -> c_uint;
@@ -54,12 +56,25 @@ pub struct Commit {
 }
 
 impl Commit {
-    pub fn _new(p: *mut GitCommit) -> Commit {
+    fn _new(p: *mut GitCommit) -> Commit {
         Commit{
             _ptr: Rc::new(GitCommitPtr{_val:p}),
             _num_parents: None,
             _parents: vec![]
         }
+    }
+    pub fn lookup<T: ToOID>(repo: &Repository, oid: T) -> Result<Commit, GitError> {
+        let mut p: *mut GitCommit = ptr::mut_null();
+        let _oid = match oid.to_oid() {
+            Err(e) => {return Err(e); },
+            Ok(o) => o
+        };
+
+        let ret = unsafe { git_commit_lookup(&mut p, repo._get_ptr(), _oid._get_ptr()) };
+        if ret != 0 {
+            return Err(get_last_error());
+        }
+        return Ok(Commit::_new(p));
     }
     pub fn _get_ptr(&self) -> *mut GitCommit { self._ptr.deref()._val }
 

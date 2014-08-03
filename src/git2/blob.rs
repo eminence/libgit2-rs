@@ -2,16 +2,18 @@ extern crate libc;
 
 use std::rc::Rc;
 use std::vec;
+use std::ptr;
 use self::libc::{c_int};
 use git2;
-use git2::repository::{GitRepo};
-use git2::oid::{GitOid};
+use git2::repository::{GitRepo,Repository};
+use git2::oid::{GitOid,ToOID};
+use git2::error::{GitError, get_last_error};
 
 pub type GitOff = i64;
 
 extern {
     fn git_blob_free(obj: *mut GitBlob);
-    //fn git_blob_lookup(obj: *mut *mut GitBlob, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
+    fn git_blob_lookup(obj: *mut *mut GitBlob, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
     fn git_blob_rawsize(obj: *const GitBlob) -> GitOff;
     fn git_blob_rawcontent(obj: *mut GitBlob) -> *const u8;
     fn git_blob_owner(obj: *const GitBlob) -> *mut GitRepo;
@@ -35,12 +37,27 @@ pub struct Blob {
 }
 
 impl Blob {
-    pub fn _new(p: *mut GitBlob, repo: &git2::Repository) -> Blob {
+    fn _new(p: *mut GitBlob, repo: &git2::Repository) -> Blob {
         Blob {
             _ptr: Rc::new(GitBlobPtr{_val:p}),
             _repo: repo.clone()
         }
     }
+    pub fn lookup<T: ToOID>(repo: &Repository, oid: T) -> Result<Blob, GitError> {
+        let mut p: *mut GitBlob = ptr::mut_null();
+        let _oid = match oid.to_oid() {
+            Err(e) => {return Err(e); },
+            Ok(o) => o
+        };
+
+        let ret = unsafe { git_blob_lookup(&mut p, repo._get_ptr(), _oid._get_ptr()) };
+        if ret != 0 {
+            return Err(get_last_error());
+        }
+        println!("done git_object_lookup, p is {}", p);
+        return Ok(Blob::_new(p, repo));
+    }
+
     pub fn _get_ptr(&self) -> *mut GitBlob { self._ptr.deref()._val }
     pub fn _get_const_ptr(&self) -> *const GitBlob { self._ptr.deref()._val as *const GitBlob }
     pub fn rawsize(&self) -> GitOff { unsafe {git_blob_rawsize(self._get_const_ptr())}}

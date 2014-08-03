@@ -1,15 +1,16 @@
 extern crate libc;
 
 use std::rc::Rc;
-use self::libc::{c_int};
+use std::ptr;
+use self::libc::{c_int, c_char};
 
-use git2::repository::{Repository};
+use git2::repository::{GitRepo,Repository};
 use git2::oid::{OID,GitOid,ToOID};
-use git2::error::{GitError};
+use git2::error::{GitError,get_last_error};
 
 extern {
     fn git_reference_free(repf: *mut GitReference);
-    //fn git_reference_lookup(refp: *mut *mut GitReference, repo: *mut GitRepo, path: *const c_char) -> c_int;
+    fn git_reference_lookup(refp: *mut *mut GitReference, repo: *mut GitRepo, path: *const c_char) -> c_int;
     fn git_reference_is_branch(refp: *mut GitReference) -> c_int;
     fn git_reference_is_remote(refp: *mut GitReference) -> c_int;
     fn git_reference_type(refp: *mut GitReference) -> c_int;
@@ -39,9 +40,23 @@ pub enum GitRefType {
 }
 
 impl Reference {
-    pub fn _new(repo: Repository, p: *mut GitReference) -> Reference {
+    fn _new(repo: Repository, p: *mut GitReference) -> Reference {
         Reference{ repo : repo, _ptr: Rc::new(GitRefPtr{_val: p})}
     }
+    pub fn lookup(repo: &Repository, name:&str) -> Result<Reference, GitError> {
+        unsafe {
+            let mut p: *mut GitReference = ptr::mut_null();
+            let ret = git_reference_lookup(&mut p, repo._get_ptr(), name.to_c_str().unwrap());
+            if ret != 0 {
+                return Err(get_last_error());
+            }
+            println!("ref is OK");
+            Ok(Reference::_new(repo.clone(), p))
+        }
+    }
+
+
+
     fn _get_ptr(&self) -> *mut GitReference {
         self._ptr.deref()._val
     }

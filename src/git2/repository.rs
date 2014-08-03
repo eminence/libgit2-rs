@@ -7,19 +7,14 @@ use std::string::raw::from_buf;
 use self::libc::{c_char, c_uchar, c_int};
 
 use git2::error::{GitError, get_last_error};
-use git2::reference::{Reference, GitReference};
-use git2::oid::{GitOid,ToOID};
-use git2::object::{GitObject, Object, GitObjectType};
-use git2::blob::{Blob, GitBlob};
-use git2::commit::{Commit, GitCommit};
+use git2::reference::{Reference};
+use git2::oid::{ToOID};
+use git2::object::{Object, GitObjectType};
+use git2::blob::{Blob};
+use git2::commit::{Commit};
 use git2::config::{Config,GitConfig};
 
 extern {
-    fn git_reference_lookup(refp: *mut *mut GitReference, repo: *mut GitRepo, path: *const c_char) -> c_int;
-    fn git_object_lookup(obj: *mut *mut GitObject, repo: *mut GitRepo, oid: *const GitOid, t:GitObjectType) -> c_int;
-    fn git_blob_lookup(obj: *mut *mut GitBlob, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
-    fn git_commit_lookup(obj: *mut *mut GitCommit, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
-
     fn git_repository_free(repo: *mut GitRepo);
     fn git_repository_init(repo: *mut *mut GitRepo, path: *const c_char, is_bare:u32) -> c_int;
     fn git_repository_open(repo: *mut *mut GitRepo, path: *const c_char) -> c_int;
@@ -98,60 +93,19 @@ impl Repository {
     }
 
     pub fn lookup_reference(&self, name: &str) -> Result<Reference, GitError> {
-        unsafe {
-            let mut p: *mut GitReference = ptr::mut_null();
-            let ret = git_reference_lookup(&mut p, self._get_ptr(), name.to_c_str().unwrap());
-            if ret != 0 {
-                return Err(get_last_error());
-            }
-            println!("ref is OK");
-            Ok(Reference::_new(self.clone(), p))
-        }
+        Reference::lookup(self, name)
     }
 
     pub fn lookup_object<T: ToOID>(&self, oid: T, t: GitObjectType) -> Result<Object, GitError> {
-        let mut p: *mut GitObject = ptr::mut_null();
-        let _oid = match oid.to_oid() {
-            Err(e) => {return Err(e); },
-            Ok(o) => o
-        };
-
-        println!("About to git_object_lookup");
-        let ret = unsafe{ git_object_lookup(&mut p, self._get_ptr(), _oid._get_ptr(), t) };
-        if ret != 0 {
-            return Err(get_last_error());
-        }
-        println!("done git_object_lookup, p is {}", p);
-        return Ok(Object::_new(p));
+        Object::lookup(self, oid, t)
     }
 
     pub fn lookup_blob<T: ToOID>(&self, oid: T) -> Result<Blob, GitError> {
-        let mut p: *mut GitBlob = ptr::mut_null();
-        let _oid = match oid.to_oid() {
-            Err(e) => {return Err(e); },
-            Ok(o) => o
-        };
-
-        let ret = unsafe { git_blob_lookup(&mut p, self._get_ptr(), _oid._get_ptr()) };
-        if ret != 0 {
-            return Err(get_last_error());
-        }
-        println!("done git_object_lookup, p is {}", p);
-        return Ok(Blob::_new(p, self));
+        Blob::lookup(self, oid)
     }
 
     pub fn lookup_commit<T: ToOID>(&self, oid: T) -> Result<Commit, GitError> {
-        let mut p: *mut GitCommit = ptr::mut_null();
-        let _oid = match oid.to_oid() {
-            Err(e) => {return Err(e); },
-            Ok(o) => o
-        };
-
-        let ret = unsafe { git_commit_lookup(&mut p, self._get_ptr(), _oid._get_ptr()) };
-        if ret != 0 {
-            return Err(get_last_error());
-        }
-        return Ok(Commit::_new(p));
+        Commit::lookup(self, oid)
     }
 }
 
