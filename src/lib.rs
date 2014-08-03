@@ -1,17 +1,17 @@
 #![crate_name = "git2"]
 #![crate_type="lib"]
 
-
+//! The git2 crate
 
 pub mod git2 {
+    //! The git2 module
 
-    pub use self::error::_GitError;
     pub use self::repository::{Repository};
     pub use self::reference::{Reference};
-    pub use self::oid::{OID, GitOid, ToOID};
+    pub use self::oid::{OID, ToOID};
     pub use self::object::{Object, GitObjectType};
     pub use self::blob::{Blob, GitOff};
-    pub use self::commit::{Commit, GitSignature};
+    pub use self::commit::{Commit};
     pub mod error;
     pub mod repository;
     pub mod reference;

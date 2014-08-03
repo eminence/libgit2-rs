@@ -15,6 +15,7 @@ use git2::commit::{Commit};
 use git2::config::{Config};
 use git2::config;
 
+
 pub mod opaque {
     pub enum Repo {}
 }
@@ -42,14 +43,37 @@ pub struct Repository {
 }
 
 
-
+/// Represents a git repository
 impl Repository {
-    pub fn _new(p: *mut self::opaque::Repo) -> Repository {
+    fn _new(p: *mut self::opaque::Repo) -> Repository {
         Repository {_ptr : Rc::new(GitRepoPtr{_val:p})} 
     }
     pub fn _get_ptr(&self) -> *mut self::opaque::Repo {
+        //! Not actually a public interface
         self._ptr.deref()._val
     }
+
+    /// Creates a new Git repository in the given folder.
+    ///
+    /// local_path : the path to the repository
+    ///
+    /// is_bare : if true, a Git repository without a working directory is created at the pointed
+    /// path. If false, provided path will be considered as the working directory into which the
+    /// .git directory will be created.
+    ///
+    /// Example:
+    /// --------
+    /// 
+    /// ```ignore
+    /// let dir = TempDir::new("git2_test1").unwrap();
+    /// let repo = match git2::Repository::init(dir.path(), false) {
+    ///     Ok(r) => r,
+    ///     Err(e) => fail!("Failed to init repo:\n{}", e.message)
+    /// };
+    /// assert!(repo.is_empty() == true);
+    ///
+    /// ```
+    ///
     pub fn init(local_path: &Path, is_bare: bool) -> Result<Repository, GitError> {
         let mut p: *mut self::opaque::Repo = ptr::mut_null();
         let ret = unsafe { git_repository_init(&mut p, local_path.to_c_str().unwrap(), is_bare as u32) };
@@ -59,6 +83,11 @@ impl Repository {
         println!("git repo pointer ends at {}", p);
         Ok(Repository::_new(p))
     }
+    
+    /// Open a git repository.
+    ///
+    /// local_path : the path to the repository
+    ///
     pub fn open(local_path: &Path) -> Result<Repository, GitError> {
         let mut p: *mut self::opaque::Repo = ptr::mut_null();
         let ret = unsafe { git_repository_open(&mut p, local_path.to_c_str().unwrap()) };
@@ -68,6 +97,14 @@ impl Repository {
         println!("git repo pointer ends at {}", p);
         Ok(Repository::_new(p))
     }
+
+    /// Open a bare repository on the serverside.
+    ///
+    /// This is a fast open for bare repositories that will come in handy if you're e.g. hosting
+    /// git repositories and need to access them efficiently
+    ///
+    /// local_path : Direct path to the bare repository
+    ///
     pub fn open_bare(local_path: &Path) -> Result<Repository, GitError> {
         let mut p: *mut self::opaque::Repo = ptr::mut_null();
         let ret = unsafe { git_repository_open_bare(&mut p, local_path.to_c_str().unwrap()) };
@@ -77,15 +114,33 @@ impl Repository {
         println!("git repo pointer ends at {}", p);
         Ok(Repository::_new(p))
     }
+
+    /// Check if a repository is bare
     pub fn is_bare(&self) -> bool { unsafe {git_repository_is_bare(self._get_ptr()) == 1 } }
+
+    /// Check if a repository is empty
+    ///
+    /// An empty repository has just been initialized and contains no references.
     pub fn is_empty(&self) -> bool { unsafe {git_repository_is_empty(self._get_ptr()) == 1 } }
+
+    /// Determine if the repository was a shallow clone
     pub fn is_shallow(&self) -> bool { unsafe {git_repository_is_shallow(self._get_ptr()) == 1 } }
+
+    /// Get the path of this repository
+    ///
+    /// This is the path of the `.git` folder for normal repositories, or of the repository itself
+    /// for bare repositories.
     pub fn path(&self) -> Path {
         unsafe {
             let _path = git_repository_path(self._get_ptr());
             Path::new(from_buf(_path))
         }
     }
+
+    /// Get the configuration file for this repository.
+    ///
+    /// If a configuration file has not been set, the default config set for the repository will be
+    /// returned, including global and system configurations (if they are available).
     pub fn config(&self) -> Result<Config,GitError> {
         let mut p: *mut config::opaque::Config = ptr::mut_null();
 

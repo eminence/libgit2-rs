@@ -23,15 +23,34 @@ extern {
 #[deriving(Eq,PartialEq,FromPrimitive)]
 #[repr(C)]
 pub enum GitObjectType {
+    /// Object can be any of the following
     GIT_OBJ_ANY = -2,                //*< Object can be any of the following */
+    
+    /// Object is invalid
     GIT_OBJ_BAD = -1,                //*< Object is invalid. */
+
+    /// Reserved for future use.
     GIT_OBJ__EXT1 = 0,                //*< Reserved for future use. */
+
+    /// A commit object
     GIT_OBJ_COMMIT = 1,                //*< A commit object. */
+
+    /// A tree (directory listing) object
     GIT_OBJ_TREE = 2,                //*< A tree (directory listing) object. */
+
+    /// A file revision object
     GIT_OBJ_BLOB = 3,                //*< A file revision object. */
+
+    /// An annotated tag object
     GIT_OBJ_TAG = 4,                //*< An annotated tag object. */
+
+    /// Reserved for future use
     GIT_OBJ__EXT2 = 5,                //*< Reserved for future use. */
+
+    /// A delta, base is given by an offset
     GIT_OBJ_OFS_DELTA = 6, //*< A delta, base is given by an offset. */
+
+    /// A delta, base is given by object id
     GIT_OBJ_REF_DELTA = 7, //*< A delta, base is given by object id. */
 }
 
@@ -48,6 +67,12 @@ impl Object {
     fn _new(p: *mut self::opaque::Object) -> Object {
         Object{_ptr: Rc::new(GitObjPtr{_val:p})}
     }
+
+    /// Lookup a reference to one of the objects in a repository.
+    ///
+    /// The 'type' parameter must match the type of the object in the odb; the method will fail
+    /// otherwise. The special value 'GIT_OBJ_ANY' may be passed to let the method guess the
+    /// object's type.
     pub fn lookup<T: ToOID>(repo: &Repository, oid:T, t: GitObjectType) -> Result<Object, GitError> {
         let mut p: *mut self::opaque::Object = ptr::mut_null();
         let _oid = match oid.to_oid() {
@@ -64,6 +89,8 @@ impl Object {
         return Ok(Object::_new(p));
     }
     pub fn _get_ptr(&self) -> *mut self::opaque::Object { self._ptr.deref()._val }
+
+    /// Get the object type of an object
     pub fn get_type(&self) -> GitObjectType {
         unsafe { git_object_type(self._get_ptr()) }
     }

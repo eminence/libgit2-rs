@@ -12,9 +12,9 @@ extern {
     fn git_oid_tostr(out: *mut c_char, size: u32, obj: *const GitOid) -> *mut c_char;
 }
 
-// Size (in bytes) of a raw/binary oid
+/// Size (in bytes) of a raw/binary oid
 pub static GIT_OID_RAWSZ: uint = 20;
-// Size (in bytes) of a hex formattted oid
+/// Size (in bytes) of a hex formattted oid
 pub static GIT_OID_HEXSZ: uint =  (GIT_OID_RAWSZ * 2);
 
 #[allow(dead_code)]
@@ -26,6 +26,7 @@ pub struct OID {
     _oid: GitOid
 }
 
+/// A trait for anything that can be converted into an OID
 pub trait ToOID {
     fn to_oid(&self) -> Result<OID, GitError>;
 }
@@ -37,6 +38,8 @@ impl OID {
         OID{_oid: new_oid}
     }
     pub fn _get_ptr(&self) -> *const GitOid { &self._oid as *const GitOid }
+
+    /// Format a OID as a hex-formatted String
     pub fn to_string(&self) -> String {
         let mut s = ::std::string::String::new();
         s.grow(GIT_OID_HEXSZ + 1, '+');

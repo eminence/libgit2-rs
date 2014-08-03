@@ -46,6 +46,8 @@ impl Blob {
             _repo: repo.clone()
         }
     }
+
+    /// Lookup a blob object from a repository.
     pub fn lookup<T: ToOID>(repo: &Repository, oid: T) -> Result<Blob, GitError> {
         let mut p: *mut self::opaque::Blob = ptr::mut_null();
         let _oid = match oid.to_oid() {
@@ -63,7 +65,11 @@ impl Blob {
 
     pub fn _get_ptr(&self) -> *mut self::opaque::Blob { self._ptr.deref()._val }
     pub fn _get_const_ptr(&self) -> *const self::opaque::Blob { self._ptr.deref()._val as *const self::opaque::Blob }
+
+    /// Get the size in bytes of the contents of a blob
     pub fn rawsize(&self) -> GitOff { unsafe {git_blob_rawsize(self._get_const_ptr())}}
+
+    /// Get a buffer with the raw content of a blob.
     pub fn rawcontent(&self) -> Vec<u8> {
         let size : uint = self.rawsize() as uint;
         let cptr = unsafe {
@@ -74,12 +80,22 @@ impl Blob {
         unsafe{vec::raw::from_buf(cptr, size)}
 
     }
+
+    /// Get the id of a blob.
     pub fn id(&self) -> git2::OID {
         unsafe {git2::OID::_new(git_blob_id(self._get_const_ptr()))}
     }
+
+    /// Determine if the blob content is most certainly binary or not.
+    ///
+    /// The heuristic used to guess if a file is binary is taken from core git: Searching for NUL
+    /// bytes and looking for a reasonable ratio of printable to non-printable characters among the
+    /// first 4000 bytes.
     pub fn is_binary(&self) -> bool {
         unsafe {git_blob_is_binary(self._get_const_ptr()) == 1}
     }
+
+    /// Get the repository that contains the blob.
     pub fn owner(&self) -> &git2::Repository {
         unsafe { 
             let p = git_blob_owner(self._get_const_ptr());

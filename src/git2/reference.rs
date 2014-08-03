@@ -47,6 +47,11 @@ impl Reference {
     fn _new(repo: Repository, p: *mut self::opaque::Reference) -> Reference {
         Reference{ repo : repo, _ptr: Rc::new(GitRefPtr{_val: p})}
     }
+
+    /// Lookup a reference by name in a repository.
+    ///
+    /// The name will be checked for validity. See `git_reference_create_symbolic()` for rules about
+    /// valid names.
     pub fn lookup(repo: &Repository, name:&str) -> Result<Reference, GitError> {
         unsafe {
             let mut p: *mut self::opaque::Reference = ptr::mut_null();
@@ -64,12 +69,20 @@ impl Reference {
     fn _get_ptr(&self) -> *mut self::opaque::Reference {
         self._ptr.deref()._val
     }
+
+    /// Check if a reference is a local branch.
     pub fn is_branch(&self) -> bool {
         unsafe{ git_reference_is_branch(self._get_ptr()) == 1 }
     }
+
+    /// Check if a reference is a remote tracking branch
     pub fn is_remote(&self) -> bool {
         unsafe{ git_reference_is_remote(self._get_ptr()) == 1 }
     }
+
+    /// Get the type of a reference.
+    ///
+    /// Either direct (`GIT_REF_OID`) or symbolic (`GIT_REF_SYMBOLIC`)
     pub fn get_type(&self) -> GitRefType {
         let enum_val = unsafe {git_reference_type(self._get_ptr())};
         match enum_val {
@@ -78,6 +91,15 @@ impl Reference {
             _ => fail!("Failed to get ref type")
         }
     }
+
+    /// Get the OID pointed to by a direct reference.
+    ///
+    /// Only available if the reference is direct (i.e. an object id reference, not a symbolic
+    /// one).
+    ///
+    /// To find the OID of a symbolic ref, call git_reference_resolve() and then this function (or
+    /// maybe use git_reference_name_to_id() to directly resolve a reference name all the way
+    /// through to an OID).
     pub fn target(&self) -> Option<OID> {
         let ret : *const GitOid= unsafe {git_reference_target(self._get_ptr())};
         if ret.is_null() { return None; }
@@ -87,6 +109,7 @@ impl Reference {
 }
 
 impl ToOID for Reference {
+    /// Converts this reference to an OID by calling `.target()`
     fn to_oid(&self) -> Result<OID, GitError> {
         Ok(self.target().unwrap())
     }

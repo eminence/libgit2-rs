@@ -35,7 +35,7 @@ pub enum GitConfigLevel {
 
 }
 
-pub struct GitConfigEntryRaw {
+struct GitConfigEntryRaw {
     name: *const c_uchar,
     value: *const c_uchar,
     level: GitConfigLevel
@@ -68,6 +68,13 @@ impl Config {
     pub fn _new(p: *mut self::opaque::Config) -> Config {
         Config {_ptr : Rc::new(GitConfigPtr{_val:p})} 
     }
+
+    /// Get the value of a boolean config variable.
+    ///
+    /// This function uses the usual C convention of 0 being false and anything else true.
+    ///
+    /// All config files will be looked into, in the order of their defined level. A higher level
+    /// means a higher priority. The first occurrence of the variable will be returned here.
     pub fn get_bool(&self, name: &str) -> Result<bool,GitError> {
         let mut val: c_int = -1; 
         match unsafe { git_config_get_bool(&mut val, self._get_ptr(), name.to_c_str().as_ptr()) } {
@@ -75,6 +82,11 @@ impl Config {
             _ => Err(get_last_error())
         }
     }
+
+    /// Get the value of a string config variable.
+    ///
+    /// All config files will be looked into, in the order of their defined level. A higher level
+    /// means a higher priority. The first occurrence of the variable will be returned here
     pub fn get_string(&self, name: &str) -> Result<String,GitError> {
         let mut p: *mut c_char = ptr::mut_null();
         unsafe {
@@ -85,6 +97,7 @@ impl Config {
         }
     }
     
+    /// Get the git_config_entry of a config variable.
     pub fn get_entry(&self, name: &str) -> Result<GitConfigEntry,GitError> {
         let mut entryptr: *mut GitConfigEntryRaw = ptr::mut_null();
         unsafe {
@@ -99,6 +112,8 @@ impl Config {
             });
         }
     }
+
+    /// Iterate over all the config variables
     pub fn iterator(&self) -> Result<GitConfigIterator,GitError> {
         let mut iter: *mut self::opaque::ConfigIterator = ptr::mut_null();
         if unsafe { git_config_iterator_new(&mut iter, self._get_ptr()) } != 0 {

@@ -28,18 +28,20 @@ extern {
 }
 
 #[deriving(Show)]
+/// Time in a signature
 pub struct GitTime {
     time: i64,
     offset: i32
 }
 
-pub struct GitSignature {
+struct GitSignature {
     name: *mut c_char,
     email: *mut c_char,
     when: GitTime
 }
 
 #[deriving(Show)]
+/// An action signature (e.g. for committers, taggers, etc)
 pub struct Signature {
     name: String,
     email: String,
@@ -67,6 +69,8 @@ impl Commit {
             _parents: vec![]
         }
     }
+
+    /// Lookup a commit object from a repository.
     pub fn lookup<T: ToOID>(repo: &Repository, oid: T) -> Result<Commit, GitError> {
         let mut p: *mut self::opaque::Commit = ptr::mut_null();
         let _oid = match oid.to_oid() {
@@ -82,12 +86,22 @@ impl Commit {
     }
     pub fn _get_ptr(&self) -> *mut self::opaque::Commit { self._ptr.deref()._val }
 
+    /// Get the full message of a commit.
+    ///
+    /// The returned message will be slightly prettified by removing any potential leading
+    /// newlines.
     pub fn message(&self) -> String {
         unsafe {
             let _msg = git_commit_message(self._get_ptr());
             ::std::string::raw::from_buf(_msg as *const u8)
         }
     }
+
+    /// Get the encoding for the message of a commit, as a string representing a standard encoding
+    /// name.
+    ///
+    /// The encoding may be NULL if the encoding header in the commit is missing; in that case
+    /// UTF-8 is assumed.
     pub fn message_encoding(&self) -> Option<String> {
         unsafe {
             let _msg = git_commit_message_encoding(self._get_ptr());
@@ -95,16 +109,25 @@ impl Commit {
             Some(::std::string::raw::from_buf(_msg as *const u8))
         }
     }
+
+    /// Get the number of parents of this commit
     pub fn parentcount(&self) -> uint {
         unsafe {git_commit_parentcount(self._get_ptr()) as uint}
     }
 
+    /// Get the commit timezone offset (i.e. committer's preferred timezone) of a commit.
+    ///
+    /// Returns positive or negative timezone offset, in minutes from UTC
     pub fn time_offset(&self) -> i32 {
         unsafe {git_commit_time_offset(self._get_ptr()) as i32}
     }
+
+    /// Get the commit time (i.e. committer time) of a commit.
     pub fn time(&self) -> i64 {
         unsafe {git_commit_time(self._get_ptr()) as i64}
     }
+
+    /// Get the author of a commit.
     pub fn author(&self) -> Signature {
         unsafe {
             let _sig: *const GitSignature = git_commit_author(self._get_ptr());
@@ -114,6 +137,8 @@ impl Commit {
             Signature{name: name, email: email, when: _sig2.when}
         }
     }
+
+    /// Get the committer of a commit.
     pub fn committer(&self) -> Signature {
         unsafe {
             let _sig: *const GitSignature = git_commit_committer(self._get_ptr());

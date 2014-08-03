@@ -9,7 +9,10 @@ extern {
 
 #[deriving(Show)]
 #[allow(non_camel_case_types)]
+#[repr(C)]
+/// Types of errors
 pub enum GitErrorType {
+    GITERR_NONE = 0,
     GITERR_NOMEMORY,
     GITERR_OS,
     GITERR_INVALID,
@@ -34,7 +37,7 @@ pub enum GitErrorType {
     GITERR_MERGE,
 }
 
-pub struct _GitError {
+struct _GitError {
     message: *const c_uchar,
     klass: GitErrorType
 }
@@ -50,6 +53,10 @@ impl Show for GitError {
     }
 }
 
+/// Returns the last error
+///
+/// You don't normally have to call this yourself, as most functions that can return an error will
+/// return a Result with a `GitError`
 pub fn get_last_error() -> GitError {
     let e: *mut _GitError = unsafe {giterr_last()};
     unsafe {
