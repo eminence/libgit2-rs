@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The git2 library documentation.">
+
+    <title>git2::git2::commit::Commit - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+
+    
+    
+</head>
+<body>
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>git2</a>&#8203;::<a href='../index.html'>git2</a>&#8203;::<a href='index.html'>commit</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='opaque/index.html'>opaque</a></div><div class='block struct'><h2>Structs</h2><a class='struct current' href='struct.Commit.html'>Commit</a><a class='struct ' href='struct.GitTime.html'>GitTime</a><a class='struct ' href='struct.Signature.html'>Signature</a></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'>Struct <a href='../../index.html'>git2</a>::<a href='../index.html'>git2</a>::<a href='index.html'>commit</a>::<a class='struct' href=''>Commit</a><span class='out-of-band'><a id='src-4804' href='../../../src/git2/src/git2/commit.rs.html#57-62'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Commit {
+    // some fields omitted
+}</pre><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl <a class='struct' href='../../../git2/git2/commit/struct.Commit.html' title='git2::git2::commit::Commit'>Commit</a></code></h3><div class='impl-methods'><h4 id='method.lookup' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.lookup' class='fnname'>lookup</a>&lt;T: <a class='trait' href='../../../git2/git2/oid/trait.ToOID.html' title='git2::git2::oid::ToOID'>ToOID</a>&gt;(repo: &amp;<a class='struct' href='../../../git2/git2/repository/struct.Repository.html' title='git2::git2::repository::Repository'>Repository</a>, oid: T) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/commit/struct.Commit.html' title='git2::git2::commit::Commit'>Commit</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</code></h4>
+<div class='docblock'><p>Lookup a commit object from a repository.</p>
+</div><h4 id='method._get_ptr' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method._get_ptr' class='fnname'>_get_ptr</a>(&amp;self) -&gt; *mut <a class='type' href='../../../git2/git2/commit/opaque/type.Commit.html' title='git2::git2::commit::opaque::Commit'>Commit</a></code></h4>
+<h4 id='method.message' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.message' class='fnname'>message</a>(&amp;self) -&gt; <a class='struct' href='http://doc.rust-lang.org/master/collections/string/struct.String.html' title='collections::string::String'>String</a></code></h4>
+<div class='docblock'><p>Get the full message of a commit.</p>
+
+<p>The returned message will be slightly prettified by removing any potential leading
+newlines.</p>
+</div><h4 id='method.message_encoding' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.message_encoding' class='fnname'>message_encoding</a>(&amp;self) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/option/type.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='http://doc.rust-lang.org/master/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;</code></h4>
+<div class='docblock'><p>Get the encoding for the message of a commit, as a string representing a standard encoding
+name.</p>
+
+<p>The encoding may be NULL if the encoding header in the commit is missing; in that case
+UTF-8 is assumed.</p>
+</div><h4 id='method.parentcount' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.parentcount' class='fnname'>parentcount</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.uint.html'>uint</a></code></h4>
+<div class='docblock'><p>Get the number of parents of this commit</p>
+</div><h4 id='method.time_offset' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.time_offset' class='fnname'>time_offset</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.i32.html'>i32</a></code></h4>
+<div class='docblock'><p>Get the commit timezone offset (i.e. committer&#39;s preferred timezone) of a commit.</p>
+
+<p>Returns positive or negative timezone offset, in minutes from UTC</p>
+</div><h4 id='method.time' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.time' class='fnname'>time</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.i64.html'>i64</a></code></h4>
+<div class='docblock'><p>Get the commit time (i.e. committer time) of a commit.</p>
+</div><h4 id='method.author' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.author' class='fnname'>author</a>(&amp;self) -&gt; <a class='struct' href='../../../git2/git2/commit/struct.Signature.html' title='git2::git2::commit::Signature'>Signature</a></code></h4>
+<div class='docblock'><p>Get the author of a commit.</p>
+</div><h4 id='method.committer' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.committer' class='fnname'>committer</a>(&amp;self) -&gt; <a class='struct' href='../../../git2/git2/commit/struct.Signature.html' title='git2::git2::commit::Signature'>Signature</a></code></h4>
+<div class='docblock'><p>Get the committer of a commit.</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../../git2/git2/commit/struct.Commit.html' title='git2::git2::commit::Commit'>Commit</a></code></h3><div class='impl-methods'><h4 id='method.clone' class='method'><a class='stability Unstable' title='Unstable'></a><code>fn <a href='#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../../git2/git2/commit/struct.Commit.html' title='git2::git2::commit::Commit'>Commit</a></code></h4>
+<h4 id='method.clone_from' class='method'><a class='stability Experimental' title='Experimental: this function is mostly unused'></a><code>fn <a href='#tymethod.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code> (or <code>str</code>), <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "git2";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    
+    <script async src="../../../search-index.js"></script>
+</body>
+</html>

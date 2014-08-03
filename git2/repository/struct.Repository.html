@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The git2 library documentation.">
+
+    <title>git2::git2::repository::Repository - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
+
+    
+    
+</head>
+<body>
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <section class="sidebar">
+        
+        <p class='location'><a href='../../index.html'>git2</a>&#8203;::<a href='../index.html'>git2</a>&#8203;::<a href='index.html'>repository</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='opaque/index.html'>opaque</a></div><div class='block struct'><h2>Structs</h2><a class='struct current' href='struct.Repository.html'>Repository</a></div>
+    </section>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press 'S' to search, '?' for more options..."
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'>Struct <a href='../../index.html'>git2</a>::<a href='../index.html'>git2</a>::<a href='index.html'>repository</a>::<a class='struct' href=''>Repository</a><span class='out-of-band'><a id='src-1279' href='../../../src/git2/src/git2/repository.rs.html#41-43'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Repository {
+    // some fields omitted
+}</pre><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl <a class='struct' href='../../../git2/git2/repository/struct.Repository.html' title='git2::git2::repository::Repository'>Repository</a></code></h3><div class='docblock'><p>Represents a git repository</p>
+</div><div class='impl-methods'><h4 id='method._get_ptr' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method._get_ptr' class='fnname'>_get_ptr</a>(&amp;self) -&gt; *mut <a class='type' href='../../../git2/git2/repository/opaque/type.Repo.html' title='git2::git2::repository::opaque::Repo'>Repo</a></code></h4>
+<div class='docblock'><p>Not actually a public interface</p>
+</div><h4 id='method.init' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.init' class='fnname'>init</a>(local_path: &amp;<a class='struct' href='http://doc.rust-lang.org/master/std/path/posix/struct.Path.html' title='std::path::posix::Path'>Path</a>, is_bare: <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/repository/struct.Repository.html' title='git2::git2::repository::Repository'>Repository</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</code></h4>
+<div class='docblock'><p>Creates a new Git repository in the given folder.</p>
+
+<p>local_path : the path to the repository</p>
+
+<p>is_bare : if true, a Git repository without a working directory is created at the pointed
+path. If false, provided path will be considered as the working directory into which the
+.git directory will be created.</p>
+
+<h2 id="example:" class='section-header'><a
+                           href="#example:">Example:</a></h2><pre class='rust '>
+<span class='kw'>let</span> <span class='ident'>dir</span> <span class='op'>=</span> <span class='ident'>TempDir</span>::<span class='ident'>new</span>(<span class='string'>&quot;git2_test1&quot;</span>).<span class='ident'>unwrap</span>();
+<span class='kw'>let</span> <span class='ident'>repo</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='ident'>git2</span>::<span class='ident'>Repository</span>::<span class='ident'>init</span>(<span class='ident'>dir</span>.<span class='ident'>path</span>(), <span class='boolval'>false</span>) {
+    <span class='prelude-val'>Ok</span>(<span class='ident'>r</span>) <span class='op'>=&gt;</span> <span class='ident'>r</span>,
+    <span class='prelude-val'>Err</span>(<span class='ident'>e</span>) <span class='op'>=&gt;</span> <span class='macro'>fail</span><span class='macro'>!</span>(<span class='string'>&quot;Failed to init repo:\n{}&quot;</span>, <span class='ident'>e</span>.<span class='ident'>message</span>)
+};
+<span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>repo</span>.<span class='ident'>is_empty</span>() <span class='op'>==</span> <span class='boolval'>true</span>);
+</pre>
+</div><h4 id='method.open' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.open' class='fnname'>open</a>(local_path: &amp;<a class='struct' href='http://doc.rust-lang.org/master/std/path/posix/struct.Path.html' title='std::path::posix::Path'>Path</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/repository/struct.Repository.html' title='git2::git2::repository::Repository'>Repository</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</code></h4>
+<div class='docblock'><p>Open a git repository.</p>
+
+<p>local_path : the path to the repository</p>
+</div><h4 id='method.open_bare' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.open_bare' class='fnname'>open_bare</a>(local_path: &amp;<a class='struct' href='http://doc.rust-lang.org/master/std/path/posix/struct.Path.html' title='std::path::posix::Path'>Path</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/repository/struct.Repository.html' title='git2::git2::repository::Repository'>Repository</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</code></h4>
+<div class='docblock'><p>Open a bare repository on the serverside.</p>
+
+<p>This is a fast open for bare repositories that will come in handy if you&#39;re e.g. hosting
+git repositories and need to access them efficiently</p>
+
+<p>local_path : Direct path to the bare repository</p>
+</div><h4 id='method.is_bare' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.is_bare' class='fnname'>is_bare</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>Check if a repository is bare</p>
+</div><h4 id='method.is_empty' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.is_empty' class='fnname'>is_empty</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>Check if a repository is empty</p>
+
+<p>An empty repository has just been initialized and contains no references.</p>
+</div><h4 id='method.is_shallow' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.is_shallow' class='fnname'>is_shallow</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>Determine if the repository was a shallow clone</p>
+</div><h4 id='method.path' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.path' class='fnname'>path</a>(&amp;self) -&gt; <a class='struct' href='http://doc.rust-lang.org/master/std/path/posix/struct.Path.html' title='std::path::posix::Path'>Path</a></code></h4>
+<div class='docblock'><p>Get the path of this repository</p>
+
+<p>This is the path of the <code>.git</code> folder for normal repositories, or of the repository itself
+for bare repositories.</p>
+</div><h4 id='method.config' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.config' class='fnname'>config</a>(&amp;self) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/config/struct.Config.html' title='git2::git2::config::Config'>Config</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</code></h4>
+<div class='docblock'><p>Get the configuration file for this repository.</p>
+
+<p>If a configuration file has not been set, the default config set for the repository will be
+returned, including global and system configurations (if they are available).</p>
+</div><h4 id='method.lookup_reference' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.lookup_reference' class='fnname'>lookup_reference</a>(&amp;self, name: &amp;<a href='http://doc.rust-lang.org/master/std/primitive.str.html'>str</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/reference/struct.Reference.html' title='git2::git2::reference::Reference'>Reference</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</code></h4>
+<h4 id='method.lookup_object' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.lookup_object' class='fnname'>lookup_object</a>&lt;T: <a class='trait' href='../../../git2/git2/oid/trait.ToOID.html' title='git2::git2::oid::ToOID'>ToOID</a>&gt;(&amp;self, oid: T, t: <a class='type' href='../../../git2/git2/object/type.GitObjectType.html' title='git2::git2::object::GitObjectType'>GitObjectType</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/object/struct.Object.html' title='git2::git2::object::Object'>Object</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</code></h4>
+<h4 id='method.lookup_blob' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.lookup_blob' class='fnname'>lookup_blob</a>&lt;T: <a class='trait' href='../../../git2/git2/oid/trait.ToOID.html' title='git2::git2::oid::ToOID'>ToOID</a>&gt;(&amp;self, oid: T) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/blob/struct.Blob.html' title='git2::git2::blob::Blob'>Blob</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</code></h4>
+<h4 id='method.lookup_commit' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.lookup_commit' class='fnname'>lookup_commit</a>&lt;T: <a class='trait' href='../../../git2/git2/oid/trait.ToOID.html' title='git2::git2::oid::ToOID'>ToOID</a>&gt;(&amp;self, oid: T) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/commit/struct.Commit.html' title='git2::git2::commit::Commit'>Commit</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</code></h4>
+</div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl <a class='trait' href='http://doc.rust-lang.org/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='../../../git2/git2/repository/struct.Repository.html' title='git2::git2::repository::Repository'>Repository</a></code></h3><div class='impl-methods'><h4 id='method.clone' class='method'><a class='stability Unstable' title='Unstable'></a><code>fn <a href='#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='struct' href='../../../git2/git2/repository/struct.Repository.html' title='git2::git2::repository::Repository'>Repository</a></code></h4>
+<h4 id='method.clone_from' class='method'><a class='stability Experimental' title='Experimental: this function is mostly unused'></a><code>fn <a href='#tymethod.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <div id="help" class="hidden">
+        <div class="shortcuts">
+            <h1>Keyboard shortcuts</h1>
+            <dl>
+                <dt>?</dt>
+                <dd>Show this help dialog</dd>
+                <dt>S</dt>
+                <dd>Focus the search field</dd>
+                <dt>&larrb;</dt>
+                <dd>Move up in search results</dd>
+                <dt>&rarrb;</dt>
+                <dd>Move down in search results</dd>
+                <dt>&#9166;</dt>
+                <dd>Go to active search result</dd>
+            </dl>
+        </div>
+        <div class="infos">
+            <h1>Search tricks</h1>
+            <p>
+                Prefix searches with a type followed by a colon (e.g.
+                <code>fn:</code>) to restrict the search to a given type.
+            </p>
+            <p>
+                Accepted types are: <code>fn</code>, <code>mod</code>,
+                <code>struct</code> (or <code>str</code>), <code>enum</code>,
+                <code>trait</code>, <code>typedef</code> (or
+                <code>tdef</code>).
+            </p>
+        </div>
+    </div>
+
+    
+
+    <script>
+        window.rootPath = "../../../";
+        window.currentCrate = "git2";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
+    
+    <script async src="../../../search-index.js"></script>
+</body>
+</html>
