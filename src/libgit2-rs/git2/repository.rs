@@ -5,9 +5,10 @@ use std::path::Path;
 
 use git2;
 use git2::reference::{Reference, GitReference};
-use git2::oid::{ToOID, OID};
+use git2::oid::{ToOID};
 use git2::object::{GitObject, Object, GitObjectType};
 use git2::blob::{Blob, GitBlob};
+use git2::commit::{Commit, GitCommit};
 
 pub struct GitRepo;
 
@@ -110,8 +111,19 @@ impl Repository {
         }
         println!("done git_object_lookup, p is {}", p);
         return Ok(Blob::_new(p));
+    }
+    pub fn lookup_commit<T: ToOID>(&self, oid: T) -> Result<Commit, git2::GitError> {
+        let p: *GitCommit = ptr::null();
+        let _oid = match oid.to_oid() {
+            Err(e) => {return Err(e); },
+            Ok(o) => o
+        };
 
-
+        let ret = unsafe { git2::git_commit_lookup(ptr::to_unsafe_ptr(&p), self._get_ptr(), _oid._get_ptr()) };
+        if ret != 0 {
+            return Err(git2::get_last_error());
+        }
+        return Ok(Commit::_new(p));
     }
 }
 

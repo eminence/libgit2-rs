@@ -1,5 +1,4 @@
 use std::ptr;
-use std::from_str::FromStr;
 use git2;
 use git2::GitError;
 

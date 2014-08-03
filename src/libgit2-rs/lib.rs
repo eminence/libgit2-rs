@@ -16,11 +16,13 @@ pub mod git2 {
     pub use self::oid::{OID, GitOid};
     pub use self::object::{Object, GitObject, GitObjectType};
     pub use self::blob::{Blob, GitBlob};
+    pub use self::commit::{Commit, GitCommit, GitSignature};
     pub mod repository;
     pub mod reference;
     pub mod oid;
     pub mod object;
     pub mod blob;
+    pub mod commit;
 
     //use repo::GitRepo;
     //use refe::GitReference;
@@ -140,6 +142,16 @@ pub mod git2 {
         fn git_blob_lookup(obj: **GitBlob, repo: *GitRepo, oid: *GitOid) -> libc::c_int;
         fn git_blob_rawsize(obj: *GitBlob) -> i64;
         fn git_blob_rawcontent(obj: *GitBlob) -> *u8;
+
+        fn git_commit_free(obj: *GitCommit);
+        fn git_commit_lookup(obj: **GitCommit, repo: *GitRepo, oid: *GitOid) -> libc::c_int;
+        fn git_commit_message(obj: *GitCommit) -> *libc::c_char;
+        fn git_commit_message_encoding(obj: *GitCommit) -> *libc::c_char;
+        fn git_commit_parentcount(obj: *GitCommit) -> libc::c_uint;
+        fn git_commit_time_offset(obj: *GitCommit) -> libc::c_int;
+        fn git_commit_time(obj: *GitCommit) -> i64;
+        fn git_commit_author(obj: *GitCommit) -> *GitSignature;
+        fn git_commit_committer(obj: *GitCommit) -> *GitSignature;
     }
     
     
