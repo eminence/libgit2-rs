@@ -12,24 +12,28 @@ use git2::oid::{ToOID};
 use git2::object::{Object, GitObjectType};
 use git2::blob::{Blob};
 use git2::commit::{Commit};
-use git2::config::{Config,GitConfig};
+use git2::config::{Config};
+use git2::config;
 
-extern {
-    fn git_repository_free(repo: *mut GitRepo);
-    fn git_repository_init(repo: *mut *mut GitRepo, path: *const c_char, is_bare:u32) -> c_int;
-    fn git_repository_open(repo: *mut *mut GitRepo, path: *const c_char) -> c_int;
-    fn git_repository_open_bare(repo: *mut *mut GitRepo, path: *const c_char) -> c_int;
-    fn git_repository_is_bare(repo: *mut GitRepo) -> c_int;
-    fn git_repository_is_empty(repo: *mut GitRepo) -> c_int;
-    fn git_repository_is_shallow(repo: *mut GitRepo) -> c_int;
-    fn git_repository_path(repo: *mut GitRepo) -> *const c_uchar;
-    fn git_repository_config(out: *mut *mut GitConfig, repo: *mut GitRepo) -> c_int;
+pub mod opaque {
+    pub enum Repo {}
 }
 
-pub enum GitRepo {}
+extern {
+    fn git_repository_free(repo: *mut self::opaque::Repo);
+    fn git_repository_init(repo: *mut *mut self::opaque::Repo, path: *const c_char, is_bare:u32) -> c_int;
+    fn git_repository_open(repo: *mut *mut self::opaque::Repo, path: *const c_char) -> c_int;
+    fn git_repository_open_bare(repo: *mut *mut self::opaque::Repo, path: *const c_char) -> c_int;
+    fn git_repository_is_bare(repo: *mut self::opaque::Repo) -> c_int;
+    fn git_repository_is_empty(repo: *mut self::opaque::Repo) -> c_int;
+    fn git_repository_is_shallow(repo: *mut self::opaque::Repo) -> c_int;
+    fn git_repository_path(repo: *mut self::opaque::Repo) -> *const c_uchar;
+    fn git_repository_config(out: *mut *mut config::opaque::Config, repo: *mut self::opaque::Repo) -> c_int;
+}
+
 
 struct GitRepoPtr {
-    _val: *mut GitRepo
+    _val: *mut self::opaque::Repo
 }
     
 #[deriving(Clone)]
@@ -40,14 +44,14 @@ pub struct Repository {
 
 
 impl Repository {
-    pub fn _new(p: *mut GitRepo) -> Repository {
+    pub fn _new(p: *mut self::opaque::Repo) -> Repository {
         Repository {_ptr : Rc::new(GitRepoPtr{_val:p})} 
     }
-    pub fn _get_ptr(&self) -> *mut GitRepo {
+    pub fn _get_ptr(&self) -> *mut self::opaque::Repo {
         self._ptr.deref()._val
     }
     pub fn init(local_path: &Path, is_bare: bool) -> Result<Repository, GitError> {
-        let mut p: *mut GitRepo = ptr::mut_null();
+        let mut p: *mut self::opaque::Repo = ptr::mut_null();
         let ret = unsafe { git_repository_init(&mut p, local_path.to_c_str().unwrap(), is_bare as u32) };
         if ret != 0 {
             return Err(get_last_error());
@@ -56,7 +60,7 @@ impl Repository {
         Ok(Repository::_new(p))
     }
     pub fn open(local_path: &Path) -> Result<Repository, GitError> {
-        let mut p: *mut GitRepo = ptr::mut_null();
+        let mut p: *mut self::opaque::Repo = ptr::mut_null();
         let ret = unsafe { git_repository_open(&mut p, local_path.to_c_str().unwrap()) };
         if ret != 0 {
             return Err(get_last_error());
@@ -65,7 +69,7 @@ impl Repository {
         Ok(Repository::_new(p))
     }
     pub fn open_bare(local_path: &Path) -> Result<Repository, GitError> {
-        let mut p: *mut GitRepo = ptr::mut_null();
+        let mut p: *mut self::opaque::Repo = ptr::mut_null();
         let ret = unsafe { git_repository_open_bare(&mut p, local_path.to_c_str().unwrap()) };
         if ret != 0 {
             return Err(get_last_error());
@@ -83,7 +87,7 @@ impl Repository {
         }
     }
     pub fn config(&self) -> Result<Config,GitError> {
-        let mut p: *mut GitConfig = ptr::mut_null();
+        let mut p: *mut config::opaque::Config = ptr::mut_null();
 
         match unsafe { git_repository_config(&mut p, self._get_ptr()) } {
             0 => Ok(Config::_new(p)),

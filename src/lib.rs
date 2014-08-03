@@ -6,13 +6,12 @@
 pub mod git2 {
 
     pub use self::error::_GitError;
-    pub use self::repository::{Repository, GitRepo};
-    pub use self::reference::{Reference, GitReference};
+    pub use self::repository::{Repository};
+    pub use self::reference::{Reference};
     pub use self::oid::{OID, GitOid, ToOID};
-    pub use self::object::{Object, GitObject, GitObjectType};
-    pub use self::blob::{Blob, GitBlob, GitOff};
-    pub use self::commit::{Commit, GitCommit, GitSignature};
-    pub use self::config::{GitConfig, GitConfigEntryRaw, GitConfigIteratorRaw};
+    pub use self::object::{Object, GitObjectType};
+    pub use self::blob::{Blob, GitOff};
+    pub use self::commit::{Commit, GitSignature};
     pub mod error;
     pub mod repository;
     pub mod reference;

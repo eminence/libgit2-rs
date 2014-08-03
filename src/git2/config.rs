@@ -7,20 +7,21 @@ use self::libc::{c_int,c_char,c_uchar};
 
 use git2::error::{GitError, get_last_error};
 
-extern {
-    fn git_config_free(obj: *mut GitConfig);
-    fn git_config_get_bool(out: *mut c_int, obj: *const GitConfig, name: *const c_char) -> c_int;
-    fn git_config_get_string(out: *mut *mut c_char, obj: *const GitConfig, name: *const c_char) -> c_int;
-    fn git_config_get_entry(out: *mut *mut GitConfigEntryRaw, obj: *const GitConfig, name: *const c_char) -> c_int;
-    fn git_config_iterator_new(out: *mut *mut GitConfigIteratorRaw, obj: *const GitConfig) -> c_int;
-    fn git_config_next(out: *mut *mut GitConfigEntryRaw, obj: *mut GitConfigIteratorRaw) -> c_int;
-    fn git_config_iterator_free(obj: *mut GitConfigIteratorRaw);
+pub mod opaque {
+    pub enum Config {}
+    pub enum ConfigIterator {}
 }
 
-// Represents the opaque git_config pointer type
-pub enum GitConfig {}
-// Represents the opaque git_config_iterator pointer type
-pub enum GitConfigIteratorRaw {}
+extern {
+    fn git_config_free(obj: *mut self::opaque::Config);
+    fn git_config_get_bool(out: *mut c_int, obj: *const self::opaque::Config, name: *const c_char) -> c_int;
+    fn git_config_get_string(out: *mut *mut c_char, obj: *const self::opaque::Config, name: *const c_char) -> c_int;
+    fn git_config_get_entry(out: *mut *mut GitConfigEntryRaw, obj: *const self::opaque::Config, name: *const c_char) -> c_int;
+    fn git_config_iterator_new(out: *mut *mut self::opaque::ConfigIterator, obj: *const self::opaque::Config) -> c_int;
+    fn git_config_next(out: *mut *mut GitConfigEntryRaw, obj: *mut self::opaque::ConfigIterator) -> c_int;
+    fn git_config_iterator_free(obj: *mut self::opaque::ConfigIterator);
+}
+
 
 #[repr(C)]
 #[deriving(Show)]
@@ -49,12 +50,12 @@ pub struct GitConfigEntry {
 
 
 struct GitConfigPtr {
-    _val: *mut GitConfig
+    _val: *mut self::opaque::Config
 }
 
 
 pub struct GitConfigIterator {
-    _iter: *mut GitConfigIteratorRaw
+    _iter: *mut self::opaque::ConfigIterator
 }
 
 #[deriving(Clone)]
@@ -63,8 +64,8 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn _get_ptr(&self) -> *const GitConfig { self._ptr.deref()._val as *const GitConfig }
-    pub fn _new(p: *mut GitConfig) -> Config {
+    pub fn _get_ptr(&self) -> *const self::opaque::Config { self._ptr.deref()._val as *const self::opaque::Config }
+    pub fn _new(p: *mut self::opaque::Config) -> Config {
         Config {_ptr : Rc::new(GitConfigPtr{_val:p})} 
     }
     pub fn get_bool(&self, name: &str) -> Result<bool,GitError> {
@@ -99,7 +100,7 @@ impl Config {
         }
     }
     pub fn iterator(&self) -> Result<GitConfigIterator,GitError> {
-        let mut iter: *mut GitConfigIteratorRaw = ptr::mut_null();
+        let mut iter: *mut self::opaque::ConfigIterator = ptr::mut_null();
         if unsafe { git_config_iterator_new(&mut iter, self._get_ptr()) } != 0 {
             return Err(get_last_error());
         }

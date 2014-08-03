@@ -4,23 +4,27 @@ use std::rc::Rc;
 use std::ptr;
 use self::libc::{c_int, c_char};
 
-use git2::repository::{GitRepo,Repository};
+use git2::repository::{Repository};
+use git2::repository;
 use git2::oid::{OID,GitOid,ToOID};
 use git2::error::{GitError,get_last_error};
 
-extern {
-    fn git_reference_free(repf: *mut GitReference);
-    fn git_reference_lookup(refp: *mut *mut GitReference, repo: *mut GitRepo, path: *const c_char) -> c_int;
-    fn git_reference_is_branch(refp: *mut GitReference) -> c_int;
-    fn git_reference_is_remote(refp: *mut GitReference) -> c_int;
-    fn git_reference_type(refp: *mut GitReference) -> c_int;
-    fn git_reference_target(refp: *mut GitReference) -> *const GitOid;
-    //fn git_reference_name_to_id(oid: *mut GitOid, repo: *mut GitRepo, name: *const c_char) -> c_int;
+pub mod opaque {
+    pub enum Reference {}
 }
 
-pub struct GitReference;
+extern {
+    fn git_reference_free(repf: *mut self::opaque::Reference);
+    fn git_reference_lookup(refp: *mut *mut self::opaque::Reference, repo: *mut repository::opaque::Repo, path: *const c_char) -> c_int;
+    fn git_reference_is_branch(refp: *mut self::opaque::Reference) -> c_int;
+    fn git_reference_is_remote(refp: *mut self::opaque::Reference) -> c_int;
+    fn git_reference_type(refp: *mut self::opaque::Reference) -> c_int;
+    fn git_reference_target(refp: *mut self::opaque::Reference) -> *const GitOid;
+    //fn git_reference_name_to_id(oid: *mut GitOid, repo: *mut repository::opaque::Repo, name: *const c_char) -> c_int;
+}
+
 struct GitRefPtr {
-    _val: *mut GitReference
+    _val: *mut self::opaque::Reference
 }
 
 #[deriving(Clone)]
@@ -40,12 +44,12 @@ pub enum GitRefType {
 }
 
 impl Reference {
-    fn _new(repo: Repository, p: *mut GitReference) -> Reference {
+    fn _new(repo: Repository, p: *mut self::opaque::Reference) -> Reference {
         Reference{ repo : repo, _ptr: Rc::new(GitRefPtr{_val: p})}
     }
     pub fn lookup(repo: &Repository, name:&str) -> Result<Reference, GitError> {
         unsafe {
-            let mut p: *mut GitReference = ptr::mut_null();
+            let mut p: *mut self::opaque::Reference = ptr::mut_null();
             let ret = git_reference_lookup(&mut p, repo._get_ptr(), name.to_c_str().unwrap());
             if ret != 0 {
                 return Err(get_last_error());
@@ -57,7 +61,7 @@ impl Reference {
 
 
 
-    fn _get_ptr(&self) -> *mut GitReference {
+    fn _get_ptr(&self) -> *mut self::opaque::Reference {
         self._ptr.deref()._val
     }
     pub fn is_branch(&self) -> bool {

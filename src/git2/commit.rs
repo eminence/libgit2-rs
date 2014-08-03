@@ -3,21 +3,27 @@ use self::libc::{c_char, c_int, c_uint};
 
 use std::rc::Rc;
 use std::ptr;
-use git2::repository::{GitRepo, Repository};
+use git2::repository::{Repository};
+use git2::repository;
 use git2::oid::{GitOid, ToOID};
 use git2::error::{GitError, get_last_error};
 
+// opaque pointerr classes
+pub mod opaque {
+    pub enum Commit {}     
+}
+
 extern {
 
-    fn git_commit_free(obj: *mut GitCommit);
-    fn git_commit_lookup(obj: *mut *mut GitCommit, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
-    fn git_commit_message(obj: *mut GitCommit) -> *const c_char;
-    fn git_commit_message_encoding(obj: *mut GitCommit) -> *const c_char;
-    fn git_commit_parentcount(obj: *mut GitCommit) -> c_uint;
-    fn git_commit_time_offset(obj: *mut GitCommit) -> c_int;
-    fn git_commit_time(obj: *mut GitCommit) -> i64;
-    fn git_commit_author(obj: *mut GitCommit) -> *const GitSignature;
-    fn git_commit_committer(obj: *mut GitCommit) -> *const GitSignature;
+    fn git_commit_free(obj: *mut self::opaque::Commit);
+    fn git_commit_lookup(obj: *mut *mut self::opaque::Commit, repo: *mut repository::opaque::Repo, oid: *const GitOid) -> c_int;
+    fn git_commit_message(obj: *mut self::opaque::Commit) -> *const c_char;
+    fn git_commit_message_encoding(obj: *mut self::opaque::Commit) -> *const c_char;
+    fn git_commit_parentcount(obj: *mut self::opaque::Commit) -> c_uint;
+    fn git_commit_time_offset(obj: *mut self::opaque::Commit) -> c_int;
+    fn git_commit_time(obj: *mut self::opaque::Commit) -> i64;
+    fn git_commit_author(obj: *mut self::opaque::Commit) -> *const GitSignature;
+    fn git_commit_committer(obj: *mut self::opaque::Commit) -> *const GitSignature;
 
 }
 
@@ -40,11 +46,9 @@ pub struct Signature {
     when: GitTime
 }
 
-pub struct GitCommit;
-
 
 struct GitCommitPtr {
-    _val: *mut GitCommit
+    _val: *mut self::opaque::Commit
 }
     
 #[deriving(Clone)]
@@ -56,7 +60,7 @@ pub struct Commit {
 }
 
 impl Commit {
-    fn _new(p: *mut GitCommit) -> Commit {
+    fn _new(p: *mut self::opaque::Commit) -> Commit {
         Commit{
             _ptr: Rc::new(GitCommitPtr{_val:p}),
             _num_parents: None,
@@ -64,7 +68,7 @@ impl Commit {
         }
     }
     pub fn lookup<T: ToOID>(repo: &Repository, oid: T) -> Result<Commit, GitError> {
-        let mut p: *mut GitCommit = ptr::mut_null();
+        let mut p: *mut self::opaque::Commit = ptr::mut_null();
         let _oid = match oid.to_oid() {
             Err(e) => {return Err(e); },
             Ok(o) => o
@@ -76,7 +80,7 @@ impl Commit {
         }
         return Ok(Commit::_new(p));
     }
-    pub fn _get_ptr(&self) -> *mut GitCommit { self._ptr.deref()._val }
+    pub fn _get_ptr(&self) -> *mut self::opaque::Commit { self._ptr.deref()._val }
 
     pub fn message(&self) -> String {
         unsafe {
