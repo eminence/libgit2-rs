@@ -14,6 +14,7 @@ pub mod git2 {
     pub use self::object::{Object, GitObject, GitObjectType};
     pub use self::blob::{Blob, GitBlob, GitOff};
     pub use self::commit::{Commit, GitCommit, GitSignature};
+    pub use self::config::{GitConfig, GitConfigEntryRaw, GitConfigIteratorRaw};
     pub mod error;
     pub mod repository;
     pub mod reference;
@@ -21,6 +22,7 @@ pub mod git2 {
     pub mod object;
     pub mod blob;
     pub mod commit;
+    pub mod config;
 
 
 #[link(name="git2")]
@@ -35,6 +37,7 @@ pub mod git2 {
         fn git_repository_is_empty(repo: *mut GitRepo) -> c_int;
         fn git_repository_is_shallow(repo: *mut GitRepo) -> c_int;
         fn git_repository_path(repo: *mut GitRepo) -> *const c_uchar;
+        fn git_repository_config(out: *mut *mut GitConfig, repo: *mut GitRepo) -> c_int;
 
         fn git_reference_free(repf: *mut GitReference);
         fn git_reference_lookup(refp: *mut *mut GitReference, repo: *mut GitRepo, path: *const c_char) -> c_int;
@@ -69,6 +72,15 @@ pub mod git2 {
         fn git_commit_time(obj: *mut GitCommit) -> i64;
         fn git_commit_author(obj: *mut GitCommit) -> *const GitSignature;
         fn git_commit_committer(obj: *mut GitCommit) -> *const GitSignature;
+
+        fn git_config_free(obj: *mut GitConfig);
+        fn git_config_get_bool(out: *mut c_int, obj: *const GitConfig, name: *const c_char) -> c_int;
+        fn git_config_get_string(out: *mut *mut c_char, obj: *const GitConfig, name: *const c_char) -> c_int;
+        fn git_config_get_entry(out: *mut *mut GitConfigEntryRaw, obj: *const GitConfig, name: *const c_char) -> c_int;
+        fn git_config_iterator_new(out: *mut *mut GitConfigIteratorRaw, obj: *const GitConfig) -> c_int;
+        fn git_config_next(out: *mut *mut GitConfigEntryRaw, obj: *mut GitConfigIteratorRaw) -> c_int;
+        fn git_config_iterator_free(obj: *mut GitConfigIteratorRaw);
+
     }
 
 }

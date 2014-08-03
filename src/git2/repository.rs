@@ -11,8 +11,9 @@ use git2::oid::{ToOID};
 use git2::object::{GitObject, Object, GitObjectType};
 use git2::blob::{Blob, GitBlob};
 use git2::commit::{Commit, GitCommit};
+use git2::config::{Config,GitConfig};
 
-pub struct GitRepo;
+pub enum GitRepo {}
 
 struct GitRepoPtr {
     _val: *mut GitRepo
@@ -67,6 +68,15 @@ impl Repository {
             let _path = git2::git_repository_path(self._get_ptr());
             Path::new(from_buf(_path))
         }
+    }
+    pub fn config(&self) -> Result<Config,GitError> {
+        let mut p: *mut GitConfig = ptr::mut_null();
+
+        match unsafe { git2::git_repository_config(&mut p, self._get_ptr()) } {
+            0 => Ok(Config::_new(p)),
+            _ => Err(get_last_error())
+        }
+
     }
 
     pub fn lookup_reference(&self, name: &str) -> Result<Reference, GitError> {
