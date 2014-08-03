@@ -39,7 +39,7 @@
     </nav>
 
     <section id='main' class="content mod">
-<h1 class='fqn'>Module <a href='../index.html'>git2</a>::<a class='mod' href=''>git2</a><span class='out-of-band'><a id='src-3' href='../../src/git2/src/lib.rs.html#6-29'>[src]</a></span></h1>
+<h1 class='fqn'>Module <a href='../index.html'>git2</a>::<a class='mod' href=''>git2</a><span class='out-of-band'><a id='src-3' href='../../src/git2/src/lib.rs.html#7-79'>[src]</a></span></h1>
 <div class='docblock'><p>The git2 module</p>
 </div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
 <table><tr><td><code>pub use self::repository::{<a class='struct' href='../../git2/git2/repository/struct.Repository.html' title='git2::git2::repository::Repository'>Repository</a>};</code></td></tr><tr><td><code>pub use self::reference::{<a class='struct' href='../../git2/git2/reference/struct.Reference.html' title='git2::git2::reference::Reference'>Reference</a>};</code></td></tr><tr><td><code>pub use self::oid::{<a class='struct' href='../../git2/git2/oid/struct.OID.html' title='git2::git2::oid::OID'>OID</a>, <a class='trait' href='../../git2/git2/oid/trait.ToOID.html' title='git2::git2::oid::ToOID'>ToOID</a>};</code></td></tr><tr><td><code>pub use self::object::{<a class='struct' href='../../git2/git2/object/struct.Object.html' title='git2::git2::object::Object'>Object</a>, <a class='type' href='../../git2/git2/object/type.GitObjectType.html' title='git2::git2::object::GitObjectType'>GitObjectType</a>};</code></td></tr><tr><td><code>pub use self::blob::{<a class='struct' href='../../git2/git2/blob/struct.Blob.html' title='git2::git2::blob::Blob'>Blob</a>, <a class='type' href='../../git2/git2/blob/type.GitOff.html' title='git2::git2::blob::GitOff'>GitOff</a>};</code></td></tr><tr><td><code>pub use self::commit::{<a class='struct' href='../../git2/git2/commit/struct.Commit.html' title='git2::git2::commit::Commit'>Commit</a>};</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
@@ -90,6 +90,56 @@
                         <td><a class='stability Unmarked' title='No stability level'></a><a class='mod' href='repository/index.html'
                                title='git2::git2::repository'>repository</a></td>
                         <td class='docblock short'></td>
+                    </tr>
+                </table><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.CapabilityFlags.html'
+                               title='git2::git2::CapabilityFlags'>CapabilityFlags</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='struct' href='struct.Version.html'
+                               title='git2::git2::Version'>Version</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                </table><h2 id='statics' class='section-header'><a href="#statics">Statics</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><code>pub static GIT_CAP_HTTPS: <a class='struct' href='../../git2/git2/struct.CapabilityFlags.html' title='git2::git2::CapabilityFlags'>CapabilityFlags</a></code><code> = </code><code>BitFlags { bits: $value }</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><code>pub static GIT_CAP_SSH: <a class='struct' href='../../git2/git2/struct.CapabilityFlags.html' title='git2::git2::CapabilityFlags'>CapabilityFlags</a></code><code> = </code><code>BitFlags { bits: $value }</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><code>pub static GIT_CAP_THREADS: <a class='struct' href='../../git2/git2/struct.CapabilityFlags.html' title='git2::git2::CapabilityFlags'>CapabilityFlags</a></code><code> = </code><code>BitFlags { bits: $value }</code></td>
+                        <td class='docblock'>&nbsp;</td>
+                    </tr>
+                </table><h2 id='functions' class='section-header'><a href="#functions">Functions</a></h2>
+<table>
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='fn' href='fn.capabilities.html'
+                               title='git2::git2::capabilities'>capabilities</a></td>
+                        <td class='docblock short'></td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='fn' href='fn.version.html'
+                               title='git2::git2::version'>version</a></td>
+                        <td class='docblock short'><p>Returns the version of your libgit2 library</p>
+</td>
+                    </tr>
+                
+                    <tr>
+                        <td><a class='stability Unmarked' title='No stability level'></a><a class='fn' href='fn.version_check.html'
+                               title='git2::git2::version_check'>version_check</a></td>
+                        <td class='docblock short'><p>Checks to make sure your version of libgit2 is appropriate</p>
+</td>
                     </tr>
                 </table></section>
     <section id='search' class="content hidden"></section>
