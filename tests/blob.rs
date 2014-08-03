@@ -2,6 +2,7 @@
 
 extern crate git2;
 use git2::git2;
+use git2::git2::{OID, ToOID};
 use std::io::TempDir;
 
 #[test]
@@ -12,8 +13,20 @@ fn test_blob() {
     };
     assert!(repo.is_empty() == false);
 
-    let obj = repo.lookup_blob("95d09f2b10159347eece71399a7e2e907ea3df4f").unwrap();
+    let oid: OID = match "95d09f2b10159347eece71399a7e2e907ea3df4f".to_oid() {
+        Ok(o) => o,
+        Err(e) => fail!(e)
+    };
+    let obj = repo.lookup_blob(oid).unwrap();
 
     assert!(obj.rawsize() == 11);
     assert!(obj.rawcontent().as_slice() == "hello world".as_bytes());
+
+    let owner = obj.owner();
+    assert!(owner.path() == repo.path());
+
+    let id = obj.id();
+    assert!(id == oid);
+ 
+    assert!(obj.is_binary() == false);
 }

@@ -26,10 +26,10 @@ pub struct Repository {
 
 
 impl Repository {
-    fn _new(p: *mut GitRepo) -> Repository {
+    pub fn _new(p: *mut GitRepo) -> Repository {
         Repository {_ptr : Rc::new(GitRepoPtr{_val:p})} 
     }
-    fn _get_ptr(&self) -> *mut GitRepo {
+    pub fn _get_ptr(&self) -> *mut GitRepo {
         self._ptr.deref()._val
     }
     pub fn init(local_path: &Path, is_bare: bool) -> Result<Repository, GitError> {
@@ -109,7 +109,7 @@ impl Repository {
             return Err(get_last_error());
         }
         println!("done git_object_lookup, p is {}", p);
-        return Ok(Blob::_new(p));
+        return Ok(Blob::_new(p, self));
     }
 
     pub fn lookup_commit<T: ToOID>(&self, oid: T) -> Result<Commit, GitError> {

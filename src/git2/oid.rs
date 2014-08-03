@@ -23,6 +23,12 @@ impl OID {
     pub fn _get_ptr(&self) -> *const GitOid { &self._oid as *const GitOid }
 }
 
+impl PartialEq for OID {
+    fn eq(&self, other: &OID) -> bool {
+        unsafe { git2::git_oid_cmp(self._get_ptr(), other._get_ptr()) == 0 }
+    }
+}
+
 impl<'a> ToOID for &'a str {
     fn to_oid(&self) -> Result<OID, GitError> {
         let mut p : GitOid = GitOid{id: [0,..20]};

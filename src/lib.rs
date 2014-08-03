@@ -10,9 +10,9 @@ pub mod git2 {
     pub use self::error::_GitError;
     pub use self::repository::{Repository, GitRepo};
     pub use self::reference::{Reference, GitReference};
-    pub use self::oid::{OID, GitOid};
+    pub use self::oid::{OID, GitOid, ToOID};
     pub use self::object::{Object, GitObject, GitObjectType};
-    pub use self::blob::{Blob, GitBlob};
+    pub use self::blob::{Blob, GitBlob, GitOff};
     pub use self::commit::{Commit, GitCommit, GitSignature};
     pub mod error;
     pub mod repository;
@@ -45,6 +45,7 @@ pub mod git2 {
         fn git_reference_name_to_id(oid: *mut GitOid, repo: *mut GitRepo, name: *const c_char) -> c_int;
 
         fn git_oid_fromstrp(oid: *mut GitOid, s: *const c_char) -> c_int;
+        fn git_oid_cmp(a: *const GitOid, b: *const GitOid) -> c_int;
 
         fn git_object_free(obj: *mut GitObject);
         fn git_object_lookup(obj: *mut *mut GitObject, repo: *mut GitRepo, oid: *const GitOid, t:GitObjectType) -> c_int;
@@ -52,8 +53,11 @@ pub mod git2 {
 
         fn git_blob_free(obj: *mut GitBlob);
         fn git_blob_lookup(obj: *mut *mut GitBlob, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
-        fn git_blob_rawsize(obj: *mut GitBlob) -> i64;
+        fn git_blob_rawsize(obj: *const GitBlob) -> GitOff;
         fn git_blob_rawcontent(obj: *mut GitBlob) -> *const u8;
+        fn git_blob_owner(obj: *const GitBlob) -> *mut GitRepo;
+        fn git_blob_id(obj: *const GitBlob) -> *const GitOid;
+        fn git_blob_is_binary(obj: *const GitBlob) -> c_int;
 
         fn git_commit_free(obj: *mut GitCommit);
         fn git_commit_lookup(obj: *mut *mut GitCommit, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
