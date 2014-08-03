@@ -1,6 +1,12 @@
 use std::ptr;
 use git2;
 use git2::error::{GitError, get_last_error};
+use std::fmt::{Show, Formatter, FormatError};
+
+// Size (in bytes) of a raw/binary oid
+pub static GIT_OID_RAWSZ: uint = 20;
+// Size (in bytes) of a hex formattted oid
+pub static GIT_OID_HEXSZ: uint =  (GIT_OID_RAWSZ * 2);
 
 pub struct GitOid {
     id: [u8, ..20]
@@ -21,6 +27,26 @@ impl OID {
         OID{_oid: new_oid}
     }
     pub fn _get_ptr(&self) -> *const GitOid { &self._oid as *const GitOid }
+    pub fn to_string(&self) -> String {
+        let mut s = ::std::string::String::new();
+        s.grow(GIT_OID_HEXSZ + 1, '+');
+        assert!(s.len() == GIT_OID_HEXSZ + 1);
+        let mut cstr = s.to_c_str();
+        unsafe {
+            git2::git_oid_tostr(cstr.as_mut_ptr(), GIT_OID_HEXSZ as u32 + 1u32, self._get_ptr());
+        }
+        match cstr.as_str() {
+            None => fail!("Failed to get str!"),
+            Some(st) => st.into_string()
+        }
+    }
+
+}
+
+impl Show for OID {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), FormatError> {
+        f.write(self.to_string().as_bytes())
+    }
 }
 
 impl PartialEq for OID {

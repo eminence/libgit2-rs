@@ -46,6 +46,7 @@ pub mod git2 {
 
         fn git_oid_fromstrp(oid: *mut GitOid, s: *const c_char) -> c_int;
         fn git_oid_cmp(a: *const GitOid, b: *const GitOid) -> c_int;
+        fn git_oid_tostr(out: *mut c_char, size: u32, obj: *const GitOid) -> *mut c_char;
 
         fn git_object_free(obj: *mut GitObject);
         fn git_object_lookup(obj: *mut *mut GitObject, repo: *mut GitRepo, oid: *const GitOid, t:GitObjectType) -> c_int;
