@@ -2,16 +2,14 @@ extern crate libc;
 
 //use std::num::{FromPrimitive};
 use std::rc::Rc;
-use self::libc::{c_char, c_uchar, c_int, c_uint};
 
-use git2;
-use git2::repository::GitRepo;
-use git2::oid::GitOid;
+//use git2::repository::GitRepo;
+//use git2::oid::GitOid;
 
 extern {
 
     fn git_object_free(obj: *mut GitObject);
-    fn git_object_lookup(obj: *mut *mut GitObject, repo: *mut GitRepo, oid: *const GitOid, t:GitObjectType) -> c_int;
+    //fn git_object_lookup(obj: *mut *mut GitObject, repo: *mut GitRepo, oid: *const GitOid, t:GitObjectType) -> c_int;
     fn git_object_type(obj: *mut GitObject) -> GitObjectType;
 }
 

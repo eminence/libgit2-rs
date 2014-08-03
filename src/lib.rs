@@ -4,8 +4,6 @@
 
 
 pub mod git2 {
-    extern crate libc;
-    use self::libc::{c_char, c_uchar, c_int, c_uint};
 
     pub use self::error::_GitError;
     pub use self::repository::{Repository, GitRepo};

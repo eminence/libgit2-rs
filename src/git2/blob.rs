@@ -2,7 +2,7 @@ extern crate libc;
 
 use std::rc::Rc;
 use std::vec;
-use self::libc::{c_char, c_uchar, c_int, c_uint};
+use self::libc::{c_int};
 use git2;
 use git2::repository::{GitRepo};
 use git2::oid::{GitOid};
@@ -11,7 +11,7 @@ pub type GitOff = i64;
 
 extern {
     fn git_blob_free(obj: *mut GitBlob);
-    fn git_blob_lookup(obj: *mut *mut GitBlob, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
+    //fn git_blob_lookup(obj: *mut *mut GitBlob, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
     fn git_blob_rawsize(obj: *const GitBlob) -> GitOff;
     fn git_blob_rawcontent(obj: *mut GitBlob) -> *const u8;
     fn git_blob_owner(obj: *const GitBlob) -> *mut GitRepo;

@@ -5,7 +5,6 @@ use std::string::raw::from_buf;
 use std::iter::Iterator;
 use self::libc::{c_int,c_char,c_uchar};
 
-use git2;
 use git2::error::{GitError, get_last_error};
 
 extern {

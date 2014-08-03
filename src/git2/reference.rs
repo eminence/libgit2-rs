@@ -1,21 +1,20 @@
 extern crate libc;
 
 use std::rc::Rc;
-use self::libc::{c_char, c_uchar, c_int, c_uint};
+use self::libc::{c_int};
 
-use git2;
-use git2::repository::{GitRepo,Repository};
+use git2::repository::{Repository};
 use git2::oid::{OID,GitOid,ToOID};
-use git2::error::{GitError, get_last_error};
+use git2::error::{GitError};
 
 extern {
     fn git_reference_free(repf: *mut GitReference);
-    fn git_reference_lookup(refp: *mut *mut GitReference, repo: *mut GitRepo, path: *const c_char) -> c_int;
+    //fn git_reference_lookup(refp: *mut *mut GitReference, repo: *mut GitRepo, path: *const c_char) -> c_int;
     fn git_reference_is_branch(refp: *mut GitReference) -> c_int;
     fn git_reference_is_remote(refp: *mut GitReference) -> c_int;
     fn git_reference_type(refp: *mut GitReference) -> c_int;
     fn git_reference_target(refp: *mut GitReference) -> *const GitOid;
-    fn git_reference_name_to_id(oid: *mut GitOid, repo: *mut GitRepo, name: *const c_char) -> c_int;
+    //fn git_reference_name_to_id(oid: *mut GitOid, repo: *mut GitRepo, name: *const c_char) -> c_int;
 }
 
 pub struct GitReference;
@@ -31,6 +30,7 @@ pub struct Reference {
 
 
 #[deriving(Eq,PartialEq)]
+#[allow(non_camel_case_types)]
 pub enum GitRefType {
     GIT_REF_INVALID = 0, //* Invalid reference */
     GIT_REF_OID = 1, //* A reference which points at an object id */

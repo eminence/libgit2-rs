@@ -3,7 +3,6 @@
 extern crate git2;
 use git2::git2;
 use git2::git2::{OID, ToOID};
-use std::io::TempDir;
 
 #[test]
 fn test_blob() {

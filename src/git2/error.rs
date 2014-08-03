@@ -3,13 +3,13 @@ use self::libc::c_uchar;
 use std::string::raw::from_buf;
 use std::fmt::{Show, Formatter, FormatError};
 
-use git2;
 extern {
     fn giterr_last() -> *mut _GitError;
 }
 
 #[deriving(Show)]
-enum GitErrorType {
+#[allow(non_camel_case_types)]
+pub enum GitErrorType {
     GITERR_NOMEMORY,
     GITERR_OS,
     GITERR_INVALID,

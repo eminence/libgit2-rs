@@ -2,7 +2,6 @@
 
 extern crate git2;
 use git2::git2;
-use std::io::TempDir;
 
 #[test]
 fn test_commit() {

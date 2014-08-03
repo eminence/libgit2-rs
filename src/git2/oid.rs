@@ -2,9 +2,8 @@ extern crate libc;
 
 use std::ptr;
 use std::fmt::{Show, Formatter, FormatError};
-use self::libc::{c_char, c_uchar, c_int, c_uint};
+use self::libc::{c_char, c_int};
 
-use git2;
 use git2::error::{GitError, get_last_error};
 
 extern {
@@ -18,6 +17,7 @@ pub static GIT_OID_RAWSZ: uint = 20;
 // Size (in bytes) of a hex formattted oid
 pub static GIT_OID_HEXSZ: uint =  (GIT_OID_RAWSZ * 2);
 
+#[allow(dead_code)]
 pub struct GitOid {
     id: [u8, ..20]
 }

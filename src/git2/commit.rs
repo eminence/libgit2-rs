@@ -1,15 +1,14 @@
 extern crate libc;
-use self::libc::{c_uchar, c_char, c_int, c_uint};
+use self::libc::{c_char, c_int, c_uint};
 
 use std::rc::Rc;
-use git2;
-use git2::repository::GitRepo;
-use git2::oid::GitOid;
+//use git2::repository::GitRepo;
+//use git2::oid::GitOid;
 
 extern {
 
     fn git_commit_free(obj: *mut GitCommit);
-    fn git_commit_lookup(obj: *mut *mut GitCommit, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
+    //fn git_commit_lookup(obj: *mut *mut GitCommit, repo: *mut GitRepo, oid: *const GitOid) -> c_int;
     fn git_commit_message(obj: *mut GitCommit) -> *const c_char;
     fn git_commit_message_encoding(obj: *mut GitCommit) -> *const c_char;
     fn git_commit_parentcount(obj: *mut GitCommit) -> c_uint;
@@ -41,11 +40,6 @@ pub struct Signature {
 
 pub struct GitCommit;
 
-enum TriState {
-    True,
-    False,
-    Unknown
-}
 
 struct GitCommitPtr {
     _val: *mut GitCommit
@@ -72,14 +66,14 @@ impl Commit {
     pub fn message(&self) -> String {
         unsafe {
             let _msg = git_commit_message(self._get_ptr());
-            ::std::str::raw::from_c_str(_msg)
+            ::std::string::raw::from_buf(_msg as *const u8)
         }
     }
     pub fn message_encoding(&self) -> Option<String> {
         unsafe {
             let _msg = git_commit_message_encoding(self._get_ptr());
             if _msg.is_null() { return None }
-            Some(::std::str::raw::from_c_str(_msg))
+            Some(::std::string::raw::from_buf(_msg as *const u8))
         }
     }
     pub fn parentcount(&self) -> uint {

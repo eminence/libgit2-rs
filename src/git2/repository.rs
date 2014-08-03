@@ -4,9 +4,8 @@ use std::rc::Rc;
 use std::ptr;
 use std::path::Path;
 use std::string::raw::from_buf;
-use self::libc::{c_char, c_uchar, c_int, c_uint};
+use self::libc::{c_char, c_uchar, c_int};
 
-use git2;
 use git2::error::{GitError, get_last_error};
 use git2::reference::{Reference, GitReference};
 use git2::oid::{GitOid,ToOID};
