@@ -1,10 +1,14 @@
 #![crate_name = "git2"]
 #![crate_type="lib"]
 
+
 //! The git2 crate
 
 pub mod git2 {
     //! The git2 module
+
+    extern crate libc;
+    use self::libc::c_int;
 
     pub use self::repository::{Repository};
     pub use self::reference::{Reference};
@@ -21,8 +25,54 @@ pub mod git2 {
     pub mod commit;
     pub mod config;
 
+
+    bitflags!(flags CapabilityFlags: u32 {
+            static GIT_CAP_THREADS = (1 << 0),
+            static GIT_CAP_HTTPS = (1 << 1),
+            static GIT_CAP_SSH = (1 << 2)
+        })
+
+    #[deriving(Show)]
+    pub struct Version {
+        major: i32,
+        minor: i32,
+        rev: i32
+    }
+
+
 #[link(name="git2")]
-    extern {}
+    extern {
+        fn git_libgit2_capabilities() -> c_int;
+        fn git_libgit2_version(major: *mut c_int, minor: *mut c_int, rev: *mut c_int);
+    }
+
+    pub fn capabilities() -> CapabilityFlags {
+        let caps = unsafe {git_libgit2_capabilities() as u32};
+        CapabilityFlags::from_bits(caps).unwrap()
+    }
+
+    /// Returns the version of your libgit2 library
+    pub fn version() -> Version {
+        let mut major = 0;
+        let mut minor = 0;
+        let mut rev = 0;
+        unsafe {git_libgit2_version(&mut major, &mut minor, &mut rev)};
+        Version{major: major, minor: minor, rev: rev}
+    }
+
+    /// Checks to make sure your version of libgit2 is appropriate
+    ///
+    /// If fail is true, this function will fail instead of returning false
+    pub fn version_check(fail: bool) -> bool {
+        let version = version();
+        
+        if ! (version.major == 0 && version.minor == 20) {
+            if fail { fail!("Incorrect libgit2 version!"); }
+            return false;
+        }
+        true
+
+    }
 
 
 

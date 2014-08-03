@@ -35,3 +35,21 @@ fn test_init_02() {
     println!("{}", path.display());
     assert!(&path == dir.path());
 }
+
+#[test]
+fn test_libgit2_caps() {
+    let caps = git2::capabilities();
+    println!("caps: {}", caps.bits());
+    println!("Has Threads: {}", caps.contains(git2::GIT_CAP_THREADS));
+    println!("Has SSH: {}", caps.contains(git2::GIT_CAP_SSH));
+    println!("Has HTTPS: {}", caps.contains(git2::GIT_CAP_HTTPS));
+        
+}
+
+#[test]
+fn test_libgit2_version() {
+    let version = git2::version();
+    println!("Version: {}", version);
+
+    assert!(git2::version_check(false) == true);
+}
