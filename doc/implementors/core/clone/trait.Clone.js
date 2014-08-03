@@ -1,0 +1,10 @@
+(function() {var implementors = {};
+implementors['git2'] = ["<a class='stability Unmarked' title='No stability level'></a>impl <a class='trait' href='http://doc.rust-lang.org/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='git2/git2/repository/struct.Repository.html' title='git2::git2::repository::Repository'>Repository</a>","<a class='stability Unmarked' title='No stability level'></a>impl <a class='trait' href='http://doc.rust-lang.org/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='git2/git2/reference/struct.Reference.html' title='git2::git2::reference::Reference'>Reference</a>","<a class='stability Unmarked' title='No stability level'></a>impl <a class='trait' href='http://doc.rust-lang.org/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='git2/git2/object/struct.Object.html' title='git2::git2::object::Object'>Object</a>","<a class='stability Unmarked' title='No stability level'></a>impl <a class='trait' href='http://doc.rust-lang.org/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='git2/git2/blob/struct.Blob.html' title='git2::git2::blob::Blob'>Blob</a>","<a class='stability Unmarked' title='No stability level'></a>impl <a class='trait' href='http://doc.rust-lang.org/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='git2/git2/commit/struct.Commit.html' title='git2::git2::commit::Commit'>Commit</a>","<a class='stability Unmarked' title='No stability level'></a>impl <a class='trait' href='http://doc.rust-lang.org/master/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='struct' href='git2/git2/config/struct.Config.html' title='git2::git2::config::Config'>Config</a>",];
+
+            if (window.register_implementors) {
+                window.register_implementors(implementors);
+            } else {
+                window.pending_implementors = implementors;
+            }
+        
+})()
