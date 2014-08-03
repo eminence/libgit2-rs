@@ -6,7 +6,7 @@ use std::io::TempDir;
 
 #[test]
 fn test_commit() {
-    let repo = match git2::Repository::open(&Path::new("/storage/home/achin/devel/libgit2.rs/src/libgit2-rs/test_data/repoA")) {
+    let repo = match git2::Repository::open(&Path::new("/storage/home/achin/devel/libgit2.rs/tests/data/repoA")) {
         Ok(r) => r,
         Err(e) => fail!("Failed to open repo:\n{}", e.message)
     };

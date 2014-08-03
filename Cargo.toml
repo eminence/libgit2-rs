@@ -6,4 +6,4 @@ authors = [ "andrew@andrewchin.net" ]
 
 [[lib]]
 name = "git2"
-path = "src/libgit2-rs/lib.rs"
+path = "src/lib.rs"
