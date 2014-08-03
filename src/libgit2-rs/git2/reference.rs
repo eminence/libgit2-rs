@@ -4,20 +4,21 @@ use std::rc::Rc;
 use git2;
 use git2::repository::{Repository};
 use git2::oid::{OID,GitOid,ToOID};
+use git2::error::{GitError, get_last_error};
 
 pub struct GitReference;
-priv struct GitRefPtr {
-    priv _val: *GitReference
+struct GitRefPtr {
+    _val: *mut GitReference
 }
 
 #[deriving(Clone)]
 pub struct Reference {
     repo: Repository,
-    priv _ptr: Rc<GitRefPtr>
+    _ptr: Rc<GitRefPtr>
 }
 
 
-#[deriving(Eq)]
+#[deriving(Eq,PartialEq)]
 pub enum GitRefType {
     GIT_REF_INVALID = 0, //* Invalid reference */
     GIT_REF_OID = 1, //* A reference which points at an object id */
@@ -26,11 +27,11 @@ pub enum GitRefType {
 }
 
 impl Reference {
-    pub fn _new(repo: Repository, p: *GitReference) -> Reference {
+    pub fn _new(repo: Repository, p: *mut GitReference) -> Reference {
         Reference{ repo : repo, _ptr: Rc::new(GitRefPtr{_val: p})}
     }
-    fn _get_ptr(&self) -> *GitReference {
-        self._ptr.borrow()._val
+    fn _get_ptr(&self) -> *mut GitReference {
+        self._ptr.deref()._val
     }
     pub fn is_branch(&self) -> bool {
         unsafe{ git2::git_reference_is_branch(self._get_ptr()) == 1 }
@@ -47,7 +48,7 @@ impl Reference {
         }
     }
     pub fn target(&self) -> Option<OID> {
-        let ret : *GitOid= unsafe {git2::git_reference_target(self._get_ptr())};
+        let ret : *const GitOid= unsafe {git2::git_reference_target(self._get_ptr())};
         if ret.is_null() { return None; }
         Some(OID::_new(ret))
     }
@@ -55,7 +56,7 @@ impl Reference {
 }
 
 impl ToOID for Reference {
-    fn to_oid(&self) -> Result<OID, git2::GitError> {
+    fn to_oid(&self) -> Result<OID, GitError> {
         Ok(self.target().unwrap())
     }
 }

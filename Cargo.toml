@@ -1,0 +1,9 @@
+[package]
+
+name = "git2"
+version = "0.1.0"
+authors = [ "andrew@andrewchin.net" ]
+
+[[lib]]
+name = "git2"
+path = "src/libgit2-rs/lib.rs"

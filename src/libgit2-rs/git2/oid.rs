@@ -1,6 +1,6 @@
 use std::ptr;
 use git2;
-use git2::GitError;
+use git2::error::{GitError, get_last_error};
 
 pub struct GitOid {
     id: [u8, ..20]
@@ -15,22 +15,22 @@ pub trait ToOID {
 }
 
 impl OID {
-    pub fn _new(o: *GitOid) -> OID { 
+    pub fn _new(o: *const GitOid) -> OID { 
         let mut new_oid : GitOid = GitOid{ id: [0,..20]};
-        unsafe { ptr::copy_memory(ptr::to_mut_unsafe_ptr(&mut new_oid), o, 1); }
+        unsafe { ptr::copy_memory(&mut new_oid, o, 1); }
         OID{_oid: new_oid}
     }
-    pub fn _get_ptr(&self) -> *GitOid { ptr::to_unsafe_ptr(&self._oid) }
+    pub fn _get_ptr(&self) -> *const GitOid { &self._oid as *const GitOid }
 }
 
 impl<'a> ToOID for &'a str {
     fn to_oid(&self) -> Result<OID, GitError> {
-        let p : GitOid = GitOid{id: [0,..20]};
+        let mut p : GitOid = GitOid{id: [0,..20]};
         let ret = unsafe {
-            git2::git_oid_fromstrp(ptr::to_unsafe_ptr(&p), self.to_c_str().unwrap())
+            git2::git_oid_fromstrp(&mut p, self.to_c_str().unwrap())
         };
         if ret != 0 {
-            return Err(git2::get_last_error());
+            return Err(get_last_error());
         }
         return Ok(OID{_oid: p});
     }

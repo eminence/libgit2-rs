@@ -6,7 +6,7 @@ use git2;
 
 pub struct GitObject;
 
-#[deriving(Eq,FromPrimitive)]
+#[deriving(Eq,PartialEq,FromPrimitive)]
 #[repr(C)]
 pub enum GitObjectType {
     GIT_OBJ_ANY = -2,                //*< Object can be any of the following */
@@ -21,20 +21,20 @@ pub enum GitObjectType {
     GIT_OBJ_REF_DELTA = 7, //*< A delta, base is given by object id. */
 }
 
-priv struct GitObjPtr {
-    priv _val: *GitObject
+struct GitObjPtr {
+    _val: *mut GitObject
 }
     
 #[deriving(Clone)]
 pub struct Object {
-    priv _ptr: Rc<GitObjPtr>,
+    _ptr: Rc<GitObjPtr>,
 }
 
 impl Object {
-    pub fn _new(p: *GitObject) -> Object {
+    pub fn _new(p: *mut GitObject) -> Object {
         Object{_ptr: Rc::new(GitObjPtr{_val:p})}
     }
-    pub fn _get_ptr(&self) -> *GitObject { self._ptr.borrow()._val }
+    pub fn _get_ptr(&self) -> *mut GitObject { self._ptr.deref()._val }
     pub fn get_type(&self) -> GitObjectType {
         unsafe { git2::git_object_type(self._get_ptr()) }
     }
