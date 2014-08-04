@@ -16,6 +16,7 @@ pub mod git2 {
     pub use self::object::{Object, GitObjectType};
     pub use self::blob::{Blob, GitOff};
     pub use self::commit::{Commit};
+    pub use self::clone::clone;
     pub mod error;
     pub mod repository;
     pub mod reference;
@@ -24,6 +25,7 @@ pub mod git2 {
     pub mod blob;
     pub mod commit;
     pub mod config;
+    pub mod clone;
 
 
     bitflags!(flags CapabilityFlags: u32 {

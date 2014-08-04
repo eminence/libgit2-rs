@@ -5,6 +5,7 @@ use std::ptr;
 use std::path::Path;
 use std::string::raw::from_buf;
 use self::libc::{c_char, c_uchar, c_int};
+use std::fmt::{Show, Formatter, FormatError};
 
 use git2::error::{GitError, get_last_error};
 use git2::reference::{Reference};
@@ -45,7 +46,8 @@ pub struct Repository {
 
 /// Represents a git repository
 impl Repository {
-    fn _new(p: *mut self::opaque::Repo) -> Repository {
+    pub fn _new(p: *mut self::opaque::Repo) -> Repository {
+        //! Not actually a public interface
         Repository {_ptr : Rc::new(GitRepoPtr{_val:p})} 
     }
     pub fn _get_ptr(&self) -> *mut self::opaque::Repo {
@@ -168,6 +170,11 @@ impl Repository {
     }
 }
 
+impl Show for Repository {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), FormatError> {
+        f.write(format!("<Repository>").as_bytes())
+    }
+}
 
 
 impl Drop for GitRepoPtr {

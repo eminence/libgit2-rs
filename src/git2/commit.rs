@@ -5,7 +5,7 @@ use std::rc::Rc;
 use std::ptr;
 use git2::repository::{Repository};
 use git2::repository;
-use git2::oid::{GitOid, ToOID};
+use git2::oid::{OID, GitOid, ToOID};
 use git2::error::{GitError, get_last_error};
 
 // opaque pointerr classes
@@ -24,7 +24,8 @@ extern {
     fn git_commit_time(obj: *mut self::opaque::Commit) -> i64;
     fn git_commit_author(obj: *mut self::opaque::Commit) -> *const GitSignature;
     fn git_commit_committer(obj: *mut self::opaque::Commit) -> *const GitSignature;
-
+    fn git_commit_parent(obj: *mut *mut self::opaque::Commit, me: *const opaque::Commit, n: c_uint) -> c_int;
+    fn git_commit_id(obj: *const opaque::Commit) -> *const GitOid;
 }
 
 #[deriving(Show)]
@@ -43,9 +44,9 @@ struct GitSignature {
 #[deriving(Show)]
 /// An action signature (e.g. for committers, taggers, etc)
 pub struct Signature {
-    name: String,
-    email: String,
-    when: GitTime
+    pub name: String,
+    pub email: String,
+    pub when: GitTime
 }
 
 
@@ -115,6 +116,23 @@ impl Commit {
         unsafe {git_commit_parentcount(self._get_ptr()) as uint}
     }
 
+    /// Get the parent commit
+    ///
+    /// idx must be less than parentcount
+    pub fn parent(&self, idx: uint) -> Result<Commit,GitError> {
+        let mut cmt: *mut opaque::Commit = ptr::mut_null();
+        match unsafe { git_commit_parent(&mut cmt, self._get_ptr() as *const opaque::Commit, idx as c_uint) } {
+            0 => Ok(Commit::_new(cmt)),
+            _ => Err(get_last_error())
+        }
+
+    }
+    
+    /// Get the id of a commit
+    pub fn id(&self) -> OID {
+        unsafe {OID::_new(git_commit_id(self._get_ptr() as *const opaque::Commit))}
+    }
+
     /// Get the commit timezone offset (i.e. committer's preferred timezone) of a commit.
     ///
     /// Returns positive or negative timezone offset, in minutes from UTC
@@ -148,6 +166,7 @@ impl Commit {
             Signature{name: name, email: email, when: _sig2.when}
         }
     }
+    
 }
 
 impl Drop for GitCommitPtr {
