@@ -9,3 +9,6 @@ clean:
 	cargo clean
 commitdoc: clean doc
 	git checkout gh-pages && rsync -avP --delete target/doc . && git add doc && git commit -m "Updated docs"
+push:
+	git push origin master
+	git push origin gh-pages
