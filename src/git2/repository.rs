@@ -15,6 +15,7 @@ use git2::blob::{Blob};
 use git2::commit::{Commit};
 use git2::config::{Config};
 use git2::config;
+use git2::branch;
 
 
 pub mod opaque {
@@ -167,6 +168,14 @@ impl Repository {
 
     pub fn lookup_commit<T: ToOID>(&self, oid: T) -> Result<Commit, GitError> {
         Commit::lookup(self, oid)
+    }
+
+    pub fn lookup_branch(&self, name: &str, flags: branch::GitBranchType) -> Result<Option<Reference>,GitError> {
+        branch::lookup(self, name, flags)
+    }
+
+    pub fn branch_iterator(&self, flags: branch:: GitBranchType) -> Result<branch::GitBranchIterator,GitError> {
+        branch::iterator(self, flags)
     }
 }
 

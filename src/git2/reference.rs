@@ -20,6 +20,7 @@ extern {
     fn git_reference_is_remote(refp: *mut self::opaque::Reference) -> c_int;
     fn git_reference_type(refp: *mut self::opaque::Reference) -> c_int;
     fn git_reference_target(refp: *mut self::opaque::Reference) -> *const GitOid;
+    fn git_reference_name(refp: *const opaque::Reference) -> *const c_char;
     //fn git_reference_name_to_id(oid: *mut GitOid, repo: *mut repository::opaque::Repo, name: *const c_char) -> c_int;
 }
 
@@ -29,7 +30,7 @@ struct GitRefPtr {
 
 #[deriving(Clone)]
 pub struct Reference {
-    repo: Repository,
+    //repo: Repository,
     _ptr: Rc<GitRefPtr>
 }
 
@@ -44,8 +45,9 @@ pub enum GitRefType {
 }
 
 impl Reference {
-    fn _new(repo: Repository, p: *mut self::opaque::Reference) -> Reference {
-        Reference{ repo : repo, _ptr: Rc::new(GitRefPtr{_val: p})}
+    pub fn _new(/*repo: &Repository,*/ p: *mut self::opaque::Reference) -> Reference {
+        //! Not really public
+        Reference{ /*repo : repo.clone(),*/ _ptr: Rc::new(GitRefPtr{_val: p})}
     }
 
     /// Lookup a reference by name in a repository.
@@ -60,7 +62,7 @@ impl Reference {
                 return Err(get_last_error());
             }
             println!("ref is OK");
-            Ok(Reference::_new(repo.clone(), p))
+            Ok(Reference::_new(p))
         }
     }
 
@@ -90,6 +92,11 @@ impl Reference {
             2 => GIT_REF_SYMBOLIC,
             _ => fail!("Failed to get ref type")
         }
+    }
+
+    /// Get the full name of a reference.
+    pub fn name(&self) -> String {
+        unsafe {::std::string::raw::from_buf(git_reference_name(self._get_ptr() as *const opaque::Reference) as *const u8)}
     }
 
     /// Get the OID pointed to by a direct reference.

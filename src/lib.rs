@@ -26,6 +26,7 @@ pub mod git2 {
     pub mod commit;
     pub mod config;
     pub mod clone;
+    pub mod branch;
 
 
     bitflags!(flags CapabilityFlags: u32 {
