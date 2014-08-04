@@ -216,6 +216,22 @@
 <span id='176'>176</span>
 <span id='177'>177</span>
 <span id='178'>178</span>
+<span id='179'>179</span>
+<span id='180'>180</span>
+<span id='181'>181</span>
+<span id='182'>182</span>
+<span id='183'>183</span>
+<span id='184'>184</span>
+<span id='185'>185</span>
+<span id='186'>186</span>
+<span id='187'>187</span>
+<span id='188'>188</span>
+<span id='189'>189</span>
+<span id='190'>190</span>
+<span id='191'>191</span>
+<span id='192'>192</span>
+<span id='193'>193</span>
+<span id='194'>194</span>
 </pre><pre class='rust '>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>libc</span>;
 
@@ -224,6 +240,7 @@
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>path</span>::<span class='ident'>Path</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>string</span>::<span class='ident'>raw</span>::<span class='ident'>from_buf</span>;
 <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>libc</span>::{<span class='ident'>c_char</span>, <span class='ident'>c_uchar</span>, <span class='ident'>c_int</span>};
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::{<span class='ident'>Show</span>, <span class='ident'>Formatter</span>, <span class='ident'>FormatError</span>};
 
 <span class='kw'>use</span> <span class='ident'>git2</span>::<span class='ident'>error</span>::{<span class='ident'>GitError</span>, <span class='ident'>get_last_error</span>};
 <span class='kw'>use</span> <span class='ident'>git2</span>::<span class='ident'>reference</span>::{<span class='ident'>Reference</span>};
@@ -233,6 +250,7 @@
 <span class='kw'>use</span> <span class='ident'>git2</span>::<span class='ident'>commit</span>::{<span class='ident'>Commit</span>};
 <span class='kw'>use</span> <span class='ident'>git2</span>::<span class='ident'>config</span>::{<span class='ident'>Config</span>};
 <span class='kw'>use</span> <span class='ident'>git2</span>::<span class='ident'>config</span>;
+<span class='kw'>use</span> <span class='ident'>git2</span>::<span class='ident'>branch</span>;
 
 
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>opaque</span> {
@@ -264,7 +282,8 @@
 
 <span class='doccomment'>/// Represents a git repository</span>
 <span class='kw'>impl</span> <span class='ident'>Repository</span> {
-    <span class='kw'>fn</span> <span class='ident'>_new</span>(<span class='ident'>p</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Repo</span>) <span class='op'>-&gt;</span> <span class='ident'>Repository</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>_new</span>(<span class='ident'>p</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Repo</span>) <span class='op'>-&gt;</span> <span class='ident'>Repository</span> {
+        <span class='doccomment'>//! Not actually a public interface</span>
         <span class='ident'>Repository</span> {<span class='ident'>_ptr</span> : <span class='ident'>Rc</span>::<span class='ident'>new</span>(<span class='ident'>GitRepoPtr</span>{<span class='ident'>_val</span>:<span class='ident'>p</span>})} 
     }
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>_get_ptr</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Repo</span> {
@@ -385,8 +404,21 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>lookup_commit</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>ToOID</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>oid</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Commit</span>, <span class='ident'>GitError</span><span class='op'>&gt;</span> {
         <span class='ident'>Commit</span>::<span class='ident'>lookup</span>(<span class='self'>self</span>, <span class='ident'>oid</span>)
     }
+
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>lookup_branch</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>name</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>, <span class='ident'>flags</span>: <span class='ident'>branch</span>::<span class='ident'>GitBranchType</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Reference</span><span class='op'>&gt;</span>,<span class='ident'>GitError</span><span class='op'>&gt;</span> {
+        <span class='ident'>branch</span>::<span class='ident'>lookup</span>(<span class='self'>self</span>, <span class='ident'>name</span>, <span class='ident'>flags</span>)
+    }
+
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>branch_iterator</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>flags</span>: <span class='ident'>branch</span>:: <span class='ident'>GitBranchType</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>branch</span>::<span class='ident'>GitBranchIterator</span>,<span class='ident'>GitError</span><span class='op'>&gt;</span> {
+        <span class='ident'>branch</span>::<span class='ident'>iterator</span>(<span class='self'>self</span>, <span class='ident'>flags</span>)
+    }
 }
 
+<span class='kw'>impl</span> <span class='ident'>Show</span> <span class='kw'>for</span> <span class='ident'>Repository</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>f</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>FormatError</span><span class='op'>&gt;</span> {
+        <span class='ident'>f</span>.<span class='ident'>write</span>(<span class='macro'>format</span><span class='macro'>!</span>(<span class='string'>&quot;&lt;Repository&gt;&quot;</span>).<span class='ident'>as_bytes</span>())
+    }
+}
 
 
 <span class='kw'>impl</span> <span class='ident'>Drop</span> <span class='kw'>for</span> <span class='ident'>GitRepoPtr</span> {

@@ -184,6 +184,9 @@
 <span id='144'>144</span>
 <span id='145'>145</span>
 <span id='146'>146</span>
+<span id='147'>147</span>
+<span id='148'>148</span>
+<span id='149'>149</span>
 </pre><pre class='rust '>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>crate_name</span> <span class='op'>=</span> <span class='string'>&quot;git2&quot;</span>]</span>
 <span class='attribute'>#<span class='op'>!</span>[<span class='ident'>crate_type</span><span class='op'>=</span><span class='string'>&quot;lib&quot;</span>]</span>
@@ -193,7 +196,7 @@
 
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>git2</span> {
     <span class='doccomment'>//! The git2 module</span>
-    
+
     <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>libc</span>;
     <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>libc</span>::<span class='ident'>c_int</span>;
 
@@ -203,6 +206,7 @@
     <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>object</span>::{<span class='ident'>Object</span>, <span class='ident'>GitObjectType</span>};
     <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>blob</span>::{<span class='ident'>Blob</span>, <span class='ident'>GitOff</span>};
     <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>commit</span>::{<span class='ident'>Commit</span>};
+    <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>clone</span>::<span class='ident'>clone</span>;
     <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>error</span>;
     <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>repository</span>;
     <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>reference</span>;
@@ -211,6 +215,8 @@
     <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>blob</span>;
     <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>commit</span>;
     <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>config</span>;
+    <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>clone</span>;
+    <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>branch</span>;
 
 
     <span class='macro'>bitflags</span><span class='macro'>!</span>(<span class='ident'>flags</span> <span class='ident'>CapabilityFlags</span>: <span class='ident'>u32</span> {

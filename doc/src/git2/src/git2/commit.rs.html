@@ -196,6 +196,25 @@
 <span id='156'>156</span>
 <span id='157'>157</span>
 <span id='158'>158</span>
+<span id='159'>159</span>
+<span id='160'>160</span>
+<span id='161'>161</span>
+<span id='162'>162</span>
+<span id='163'>163</span>
+<span id='164'>164</span>
+<span id='165'>165</span>
+<span id='166'>166</span>
+<span id='167'>167</span>
+<span id='168'>168</span>
+<span id='169'>169</span>
+<span id='170'>170</span>
+<span id='171'>171</span>
+<span id='172'>172</span>
+<span id='173'>173</span>
+<span id='174'>174</span>
+<span id='175'>175</span>
+<span id='176'>176</span>
+<span id='177'>177</span>
 </pre><pre class='rust '>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>libc</span>;
 <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>libc</span>::{<span class='ident'>c_char</span>, <span class='ident'>c_int</span>, <span class='ident'>c_uint</span>};
@@ -204,7 +223,7 @@
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>ptr</span>;
 <span class='kw'>use</span> <span class='ident'>git2</span>::<span class='ident'>repository</span>::{<span class='ident'>Repository</span>};
 <span class='kw'>use</span> <span class='ident'>git2</span>::<span class='ident'>repository</span>;
-<span class='kw'>use</span> <span class='ident'>git2</span>::<span class='ident'>oid</span>::{<span class='ident'>GitOid</span>, <span class='ident'>ToOID</span>};
+<span class='kw'>use</span> <span class='ident'>git2</span>::<span class='ident'>oid</span>::{<span class='ident'>OID</span>, <span class='ident'>GitOid</span>, <span class='ident'>ToOID</span>};
 <span class='kw'>use</span> <span class='ident'>git2</span>::<span class='ident'>error</span>::{<span class='ident'>GitError</span>, <span class='ident'>get_last_error</span>};
 
 <span class='comment'>// opaque pointerr classes</span>
@@ -223,7 +242,8 @@
     <span class='kw'>fn</span> <span class='ident'>git_commit_time</span>(<span class='ident'>obj</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Commit</span>) <span class='op'>-&gt;</span> <span class='ident'>i64</span>;
     <span class='kw'>fn</span> <span class='ident'>git_commit_author</span>(<span class='ident'>obj</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Commit</span>) <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>GitSignature</span>;
     <span class='kw'>fn</span> <span class='ident'>git_commit_committer</span>(<span class='ident'>obj</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Commit</span>) <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>GitSignature</span>;
-
+    <span class='kw'>fn</span> <span class='ident'>git_commit_parent</span>(<span class='ident'>obj</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Commit</span>, <span class='ident'>me</span>: <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>opaque</span>::<span class='ident'>Commit</span>, <span class='ident'>n</span>: <span class='ident'>c_uint</span>) <span class='op'>-&gt;</span> <span class='ident'>c_int</span>;
+    <span class='kw'>fn</span> <span class='ident'>git_commit_id</span>(<span class='ident'>obj</span>: <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>opaque</span>::<span class='ident'>Commit</span>) <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>GitOid</span>;
 }
 
 <span class='attribute'>#[<span class='ident'>deriving</span>(<span class='ident'>Show</span>)]</span>
@@ -242,9 +262,9 @@
 <span class='attribute'>#[<span class='ident'>deriving</span>(<span class='ident'>Show</span>)]</span>
 <span class='doccomment'>/// An action signature (e.g. for committers, taggers, etc)</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Signature</span> {
-    <span class='ident'>name</span>: <span class='ident'>String</span>,
-    <span class='ident'>email</span>: <span class='ident'>String</span>,
-    <span class='ident'>when</span>: <span class='ident'>GitTime</span>
+    <span class='kw'>pub</span> <span class='ident'>name</span>: <span class='ident'>String</span>,
+    <span class='kw'>pub</span> <span class='ident'>email</span>: <span class='ident'>String</span>,
+    <span class='kw'>pub</span> <span class='ident'>when</span>: <span class='ident'>GitTime</span>
 }
 
 
@@ -314,6 +334,23 @@
         <span class='kw'>unsafe</span> {<span class='ident'>git_commit_parentcount</span>(<span class='self'>self</span>.<span class='ident'>_get_ptr</span>()) <span class='kw'>as</span> <span class='ident'>uint</span>}
     }
 
+    <span class='doccomment'>/// Get the parent commit</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// idx must be less than parentcount</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>parent</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>idx</span>: <span class='ident'>uint</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Commit</span>,<span class='ident'>GitError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>cmt</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='ident'>opaque</span>::<span class='ident'>Commit</span> <span class='op'>=</span> <span class='ident'>ptr</span>::<span class='ident'>mut_null</span>();
+        <span class='kw'>match</span> <span class='kw'>unsafe</span> { <span class='ident'>git_commit_parent</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>cmt</span>, <span class='self'>self</span>.<span class='ident'>_get_ptr</span>() <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>opaque</span>::<span class='ident'>Commit</span>, <span class='ident'>idx</span> <span class='kw'>as</span> <span class='ident'>c_uint</span>) } {
+            <span class='number'>0</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='ident'>Commit</span>::<span class='ident'>_new</span>(<span class='ident'>cmt</span>)),
+            _ <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>get_last_error</span>())
+        }
+
+    }
+    
+    <span class='doccomment'>/// Get the id of a commit</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>id</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>OID</span> {
+        <span class='kw'>unsafe</span> {<span class='ident'>OID</span>::<span class='ident'>_new</span>(<span class='ident'>git_commit_id</span>(<span class='self'>self</span>.<span class='ident'>_get_ptr</span>() <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>opaque</span>::<span class='ident'>Commit</span>))}
+    }
+
     <span class='doccomment'>/// Get the commit timezone offset (i.e. committer&#39;s preferred timezone) of a commit.</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// Returns positive or negative timezone offset, in minutes from UTC</span>
@@ -347,6 +384,7 @@
             <span class='ident'>Signature</span>{<span class='ident'>name</span>: <span class='ident'>name</span>, <span class='ident'>email</span>: <span class='ident'>email</span>, <span class='ident'>when</span>: <span class='ident'>_sig2</span>.<span class='ident'>when</span>}
         }
     }
+    
 }
 
 <span class='kw'>impl</span> <span class='ident'>Drop</span> <span class='kw'>for</span> <span class='ident'>GitCommitPtr</span> {

@@ -161,6 +161,13 @@
 <span id='121'>121</span>
 <span id='122'>122</span>
 <span id='123'>123</span>
+<span id='124'>124</span>
+<span id='125'>125</span>
+<span id='126'>126</span>
+<span id='127'>127</span>
+<span id='128'>128</span>
+<span id='129'>129</span>
+<span id='130'>130</span>
 </pre><pre class='rust '>
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>libc</span>;
 
@@ -184,6 +191,7 @@
     <span class='kw'>fn</span> <span class='ident'>git_reference_is_remote</span>(<span class='ident'>refp</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Reference</span>) <span class='op'>-&gt;</span> <span class='ident'>c_int</span>;
     <span class='kw'>fn</span> <span class='ident'>git_reference_type</span>(<span class='ident'>refp</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Reference</span>) <span class='op'>-&gt;</span> <span class='ident'>c_int</span>;
     <span class='kw'>fn</span> <span class='ident'>git_reference_target</span>(<span class='ident'>refp</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Reference</span>) <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>GitOid</span>;
+    <span class='kw'>fn</span> <span class='ident'>git_reference_name</span>(<span class='ident'>refp</span>: <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>opaque</span>::<span class='ident'>Reference</span>) <span class='op'>-&gt;</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>c_char</span>;
     <span class='comment'>//fn git_reference_name_to_id(oid: *mut GitOid, repo: *mut repository::opaque::Repo, name: *const c_char) -&gt; c_int;</span>
 }
 
@@ -193,7 +201,7 @@
 
 <span class='attribute'>#[<span class='ident'>deriving</span>(<span class='ident'>Clone</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Reference</span> {
-    <span class='ident'>repo</span>: <span class='ident'>Repository</span>,
+    <span class='comment'>//repo: Repository,</span>
     <span class='ident'>_ptr</span>: <span class='ident'>Rc</span><span class='op'>&lt;</span><span class='ident'>GitRefPtr</span><span class='op'>&gt;</span>
 }
 
@@ -208,8 +216,9 @@
 }
 
 <span class='kw'>impl</span> <span class='ident'>Reference</span> {
-    <span class='kw'>fn</span> <span class='ident'>_new</span>(<span class='ident'>repo</span>: <span class='ident'>Repository</span>, <span class='ident'>p</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Reference</span>) <span class='op'>-&gt;</span> <span class='ident'>Reference</span> {
-        <span class='ident'>Reference</span>{ <span class='ident'>repo</span> : <span class='ident'>repo</span>, <span class='ident'>_ptr</span>: <span class='ident'>Rc</span>::<span class='ident'>new</span>(<span class='ident'>GitRefPtr</span>{<span class='ident'>_val</span>: <span class='ident'>p</span>})}
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>_new</span>(<span class='comment'>/*repo: &amp;Repository,*/</span> <span class='ident'>p</span>: <span class='op'>*</span><span class='kw-2'>mut</span> <span class='self'>self</span>::<span class='ident'>opaque</span>::<span class='ident'>Reference</span>) <span class='op'>-&gt;</span> <span class='ident'>Reference</span> {
+        <span class='doccomment'>//! Not really public</span>
+        <span class='ident'>Reference</span>{ <span class='comment'>/*repo : repo.clone(),*/</span> <span class='ident'>_ptr</span>: <span class='ident'>Rc</span>::<span class='ident'>new</span>(<span class='ident'>GitRefPtr</span>{<span class='ident'>_val</span>: <span class='ident'>p</span>})}
     }
 
     <span class='doccomment'>/// Lookup a reference by name in a repository.</span>
@@ -224,7 +233,7 @@
                 <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>get_last_error</span>());
             }
             <span class='macro'>println</span><span class='macro'>!</span>(<span class='string'>&quot;ref is OK&quot;</span>);
-            <span class='prelude-val'>Ok</span>(<span class='ident'>Reference</span>::<span class='ident'>_new</span>(<span class='ident'>repo</span>.<span class='ident'>clone</span>(), <span class='ident'>p</span>))
+            <span class='prelude-val'>Ok</span>(<span class='ident'>Reference</span>::<span class='ident'>_new</span>(<span class='ident'>p</span>))
         }
     }
 
@@ -254,6 +263,11 @@
             <span class='number'>2</span> <span class='op'>=&gt;</span> <span class='ident'>GIT_REF_SYMBOLIC</span>,
             _ <span class='op'>=&gt;</span> <span class='macro'>fail</span><span class='macro'>!</span>(<span class='string'>&quot;Failed to get ref type&quot;</span>)
         }
+    }
+
+    <span class='doccomment'>/// Get the full name of a reference.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>name</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>String</span> {
+        <span class='kw'>unsafe</span> {::<span class='ident'>std</span>::<span class='ident'>string</span>::<span class='ident'>raw</span>::<span class='ident'>from_buf</span>(<span class='ident'>git_reference_name</span>(<span class='self'>self</span>.<span class='ident'>_get_ptr</span>() <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>opaque</span>::<span class='ident'>Reference</span>) <span class='kw'>as</span> <span class='op'>*</span><span class='kw'>const</span> <span class='ident'>u8</span>)}
     }
 
     <span class='doccomment'>/// Get the OID pointed to by a direct reference.</span>

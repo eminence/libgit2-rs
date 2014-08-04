@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="The git2 library documentation.">
 
-    <title>git2::git2::GIT_CAP_SSH - Rust</title>
+    <title>git2::git2::branch::GitBranchType - Rust</title>
 
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
 
     
     
@@ -24,7 +24,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>git2</a>&#8203;::<a href='index.html'>git2</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='blob/index.html'>blob</a><a class='mod ' href='branch/index.html'>branch</a><a class='mod ' href='clone/index.html'>clone</a><a class='mod ' href='commit/index.html'>commit</a><a class='mod ' href='config/index.html'>config</a><a class='mod ' href='error/index.html'>error</a><a class='mod ' href='object/index.html'>object</a><a class='mod ' href='oid/index.html'>oid</a><a class='mod ' href='reference/index.html'>reference</a><a class='mod ' href='repository/index.html'>repository</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.CapabilityFlags.html'>CapabilityFlags</a><a class='struct ' href='struct.Version.html'>Version</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.capabilities.html'>capabilities</a><a class='fn ' href='fn.version.html'>version</a><a class='fn ' href='fn.version_check.html'>version_check</a></div>
+        <p class='location'><a href='../../index.html'>git2</a>&#8203;::<a href='../index.html'>git2</a>&#8203;::<a href='index.html'>branch</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='opaque/index.html'>opaque</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.GitBranchIterator.html'>GitBranchIterator</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.iterator.html'>iterator</a><a class='fn ' href='fn.lookup.html'>lookup</a></div>
     </section>
 
     <nav class="sub">
@@ -38,9 +38,15 @@
         </form>
     </nav>
 
-    <section id='main' class="content static">
-<h1 class='fqn'><a href='../index.html'>git2</a>::<a href='index.html'>git2</a>::<a class='static' href=''>GIT_CAP_SSH</a><span class='out-of-band'><a id='src-7533' href='../../src/git2/<std macros>.html#11'>[src]</a></span></h1>
-</section>
+    <section id='main' class="content type">
+<h1 class='fqn'>Enum <a href='../../index.html'>git2</a>::<a href='../index.html'>git2</a>::<a href='index.html'>branch</a>::<a class='type' href=''>GitBranchType</a><span class='out-of-band'><a id='src-6770' href='../../../src/git2/src/git2/branch.rs.html#22-27'>[src]</a></span></h1>
+<pre class='rust enum'>pub enum GitBranchType {
+    GIT_BRANCH_LOCAL,
+    GIT_BRANCH_REMOTE,
+    GIT_BRANCH_LOCALREMOTE,
+}</pre><h2 class='variants'>Variants</h2>
+<table><tr><td id='variant.GIT_BRANCH_LOCAL'><a class='stability Unmarked' title='No stability level'></a><code>GIT_BRANCH_LOCAL</code></td><td></td></tr><tr><td id='variant.GIT_BRANCH_REMOTE'><a class='stability Unmarked' title='No stability level'></a><code>GIT_BRANCH_REMOTE</code></td><td></td></tr><tr><td id='variant.GIT_BRANCH_LOCALREMOTE'><a class='stability Unmarked' title='No stability level'></a><code>GIT_BRANCH_LOCALREMOTE</code></td><td><div class='docblock'><p>A logical OR of GIT_BRANCH_LOCLA and GIT_BRANCH_REMOTE, usful in <code>branch::iterator</code></p>
+</div></td></tr></table></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -79,13 +85,13 @@
     
 
     <script>
-        window.rootPath = "../../";
+        window.rootPath = "../../../";
         window.currentCrate = "git2";
         window.playgroundUrl = "";
     </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script async src="../../../search-index.js"></script>
 </body>
 </html>

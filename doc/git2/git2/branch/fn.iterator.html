@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="The git2 library documentation.">
 
-    <title>git2::git2::GIT_CAP_SSH - Rust</title>
+    <title>git2::git2::branch::iterator - Rust</title>
 
-    <link rel="stylesheet" type="text/css" href="../../main.css">
+    <link rel="stylesheet" type="text/css" href="../../../main.css">
 
     
     
@@ -24,7 +24,7 @@
 
     <section class="sidebar">
         
-        <p class='location'><a href='../index.html'>git2</a>&#8203;::<a href='index.html'>git2</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='blob/index.html'>blob</a><a class='mod ' href='branch/index.html'>branch</a><a class='mod ' href='clone/index.html'>clone</a><a class='mod ' href='commit/index.html'>commit</a><a class='mod ' href='config/index.html'>config</a><a class='mod ' href='error/index.html'>error</a><a class='mod ' href='object/index.html'>object</a><a class='mod ' href='oid/index.html'>oid</a><a class='mod ' href='reference/index.html'>reference</a><a class='mod ' href='repository/index.html'>repository</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.CapabilityFlags.html'>CapabilityFlags</a><a class='struct ' href='struct.Version.html'>Version</a></div><div class='block fn'><h2>Functions</h2><a class='fn ' href='fn.capabilities.html'>capabilities</a><a class='fn ' href='fn.version.html'>version</a><a class='fn ' href='fn.version_check.html'>version_check</a></div>
+        <p class='location'><a href='../../index.html'>git2</a>&#8203;::<a href='../index.html'>git2</a>&#8203;::<a href='index.html'>branch</a></p><div class='block mod'><h2>Modules</h2><a class='mod ' href='opaque/index.html'>opaque</a></div><div class='block struct'><h2>Structs</h2><a class='struct ' href='struct.GitBranchIterator.html'>GitBranchIterator</a></div><div class='block fn'><h2>Functions</h2><a class='fn current' href='fn.iterator.html'>iterator</a><a class='fn ' href='fn.lookup.html'>lookup</a></div>
     </section>
 
     <nav class="sub">
@@ -38,9 +38,10 @@
         </form>
     </nav>
 
-    <section id='main' class="content static">
-<h1 class='fqn'><a href='../index.html'>git2</a>::<a href='index.html'>git2</a>::<a class='static' href=''>GIT_CAP_SSH</a><span class='out-of-band'><a id='src-7533' href='../../src/git2/<std macros>.html#11'>[src]</a></span></h1>
-</section>
+    <section id='main' class="content fn">
+<h1 class='fqn'>Function <a href='../../index.html'>git2</a>::<a href='../index.html'>git2</a>::<a href='index.html'>branch</a>::<a class='fn' href=''>iterator</a><span class='out-of-band'><a id='src-7011' href='../../../src/git2/src/git2/branch.rs.html#65-72'>[src]</a></span></h1>
+<pre class='rust fn'>pub fn iterator(repo: &amp;<a class='struct' href='../../../git2/git2/repository/struct.Repository.html' title='git2::git2::repository::Repository'>Repository</a>, flags: <a class='type' href='../../../git2/git2/branch/type.GitBranchType.html' title='git2::git2::branch::GitBranchType'>GitBranchType</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/branch/struct.GitBranchIterator.html' title='git2::git2::branch::GitBranchIterator'>GitBranchIterator</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</pre><div class='docblock'><p>Get an iterator over all the branches in this repository</p>
+</div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>
@@ -79,13 +80,13 @@
     
 
     <script>
-        window.rootPath = "../../";
+        window.rootPath = "../../../";
         window.currentCrate = "git2";
         window.playgroundUrl = "";
     </script>
-    <script src="../../jquery.js"></script>
-    <script src="../../main.js"></script>
+    <script src="../../../jquery.js"></script>
+    <script src="../../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script async src="../../../search-index.js"></script>
 </body>
 </html>

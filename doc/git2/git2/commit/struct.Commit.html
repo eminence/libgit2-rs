@@ -39,7 +39,7 @@
     </nav>
 
     <section id='main' class="content struct">
-<h1 class='fqn'>Struct <a href='../../index.html'>git2</a>::<a href='../index.html'>git2</a>::<a href='index.html'>commit</a>::<a class='struct' href=''>Commit</a><span class='out-of-band'><a id='src-4806' href='../../../src/git2/src/git2/commit.rs.html#57-62'>[src]</a></span></h1>
+<h1 class='fqn'>Struct <a href='../../index.html'>git2</a>::<a href='../index.html'>git2</a>::<a href='index.html'>commit</a>::<a class='struct' href=''>Commit</a><span class='out-of-band'><a id='src-4961' href='../../../src/git2/src/git2/commit.rs.html#58-63'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Commit {
     // some fields omitted
 }</pre><h2 id='methods'>Methods</h2><h3 class='impl'><a class='stability Unmarked' title='No stability level'></a><code>impl <a class='struct' href='../../../git2/git2/commit/struct.Commit.html' title='git2::git2::commit::Commit'>Commit</a></code></h3><div class='impl-methods'><h4 id='method.lookup' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.lookup' class='fnname'>lookup</a>&lt;T: <a class='trait' href='../../../git2/git2/oid/trait.ToOID.html' title='git2::git2::oid::ToOID'>ToOID</a>&gt;(repo: &amp;<a class='struct' href='../../../git2/git2/repository/struct.Repository.html' title='git2::git2::repository::Repository'>Repository</a>, oid: T) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/commit/struct.Commit.html' title='git2::git2::commit::Commit'>Commit</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</code></h4>
@@ -58,6 +58,12 @@ name.</p>
 UTF-8 is assumed.</p>
 </div><h4 id='method.parentcount' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.parentcount' class='fnname'>parentcount</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.uint.html'>uint</a></code></h4>
 <div class='docblock'><p>Get the number of parents of this commit</p>
+</div><h4 id='method.parent' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.parent' class='fnname'>parent</a>(&amp;self, idx: <a href='http://doc.rust-lang.org/master/std/primitive.uint.html'>uint</a>) -&gt; <a class='type' href='http://doc.rust-lang.org/master/core/result/type.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../git2/git2/commit/struct.Commit.html' title='git2::git2::commit::Commit'>Commit</a>, <a class='struct' href='../../../git2/git2/error/struct.GitError.html' title='git2::git2::error::GitError'>GitError</a>&gt;</code></h4>
+<div class='docblock'><p>Get the parent commit</p>
+
+<p>idx must be less than parentcount</p>
+</div><h4 id='method.id' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.id' class='fnname'>id</a>(&amp;self) -&gt; <a class='struct' href='../../../git2/git2/oid/struct.OID.html' title='git2::git2::oid::OID'>OID</a></code></h4>
+<div class='docblock'><p>Get the id of a commit</p>
 </div><h4 id='method.time_offset' class='method'><a class='stability Unmarked' title='No stability level'></a><code>fn <a href='#method.time_offset' class='fnname'>time_offset</a>(&amp;self) -&gt; <a href='http://doc.rust-lang.org/master/std/primitive.i32.html'>i32</a></code></h4>
 <div class='docblock'><p>Get the commit timezone offset (i.e. committer&#39;s preferred timezone) of a commit.</p>
 
