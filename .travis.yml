@@ -1,0 +1,19 @@
+language: rust
+env:
+  global:
+    - secure: FIXME: get from rust-ci.org
+before_install:
+  - sudo apt-get update
+install:
+  - sudo apt-get install -y git-core
+before_script:
+  - rustc -v
+  - cargo -V
+script:
+  - make build
+  - make doc
+  - make test
+after_script:
+  - cp -R target/doc doc
+  - curl http://www.rust-ci.org/artifacts/put?t=$RUSTCI_TOKEN | sh
+  - rm -r doc
