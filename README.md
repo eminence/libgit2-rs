@@ -1,6 +1,10 @@
 libgit2-rs
 ==========
 
+**Notice**
+You almost certainly don't want to use this.  Use https://github.com/alexcrichton/git2-rs instead
+
+
 rust bindings for libgit2 (version 0.20, maybe newer)
 
 Works with cargo and a recent Rust (0.12-pre)
